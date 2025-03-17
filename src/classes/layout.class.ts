@@ -36,6 +36,10 @@ export class Layout {
     window.addEventListener("keydown", (e) => {
       if (e.code === "Space") this.handleJump();
     });
+
+    this.gameOverPopUp.onClose = () => {
+      this.resetGame();
+    };
   }
 
   gameLogic() {
@@ -45,18 +49,6 @@ export class Layout {
       this.moveCactus();
       this.applyJumpPhysics();
     });
-  }
-
-  checkCollision() {
-    const catBounds = this.cat.container.getBounds();
-    const cactusBounds = this.cactus.container.getBounds();
-
-    return (
-      catBounds.x + catBounds.width > cactusBounds.x &&
-      catBounds.x < cactusBounds.x + cactusBounds.width &&
-      catBounds.y + catBounds.height > cactusBounds.y &&
-      catBounds.y < cactusBounds.y + cactusBounds.height
-    );
   }
 
   moveCactus() {
@@ -72,7 +64,6 @@ export class Layout {
       this.gameOver = true;
       this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
       this.container.addChild(this.gameOverPopUp.container);
-
       this.ticker.stop();
     }
   }
@@ -96,20 +87,28 @@ export class Layout {
     }
   }
 
-  //   restart.addEventListener("click", () => {
-  //     resetGame();
-  //   });
+  checkCollision() {
+    const catBounds = this.cat.container.getBounds();
+    const cactusBounds = this.cactus.container.getBounds();
 
-  //   resetGame() {
-  //     cactusContainer.x = CACTUS_CONSTANTS.container.x;
-  //     catContainer.y = CAT_CONSTANTS.container.y;
-  //     cactusSpeed = CACTUS_CONSTANTS.cactus.speed;
-  //     gameOver = false;
-  //     isJumping = false;
-  //     jumpVelocity = 0;
-  //     jumpCounter = 0;
-  //     jumpCounterText.text = `SCORE : ${jumpCounter}`;
-  //     gameOverContainer.removeChildren();
-  //     app.ticker.start();
-  //   }
+    return (
+      catBounds.x + catBounds.width > cactusBounds.x &&
+      catBounds.x < cactusBounds.x + cactusBounds.width &&
+      catBounds.y + catBounds.height > cactusBounds.y &&
+      catBounds.y < cactusBounds.y + cactusBounds.height
+    );
+  }
+
+  resetGame = () => {
+    this.cactus.container.x = CACTUS_CONSTANTS.container.x;
+    this.cat.container.y = CAT_CONSTANTS.container.y;
+    this.cactusSpeed = CACTUS_CONSTANTS.cactus.speed;
+    this.gameOver = false;
+    this.isJumping = false;
+    this.jumpVelocity = 0;
+    this.jumpCounter = 0;
+    this.counter.updateCounter(this.jumpCounter);
+    this.gameOverPopUp.container.removeChildren();
+    this.ticker.start();
+  };
 }

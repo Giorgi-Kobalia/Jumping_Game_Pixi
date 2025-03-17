@@ -1,4 +1,6 @@
 export const GAME_OVER_CONSTANTS = {
+  restart_text: "RESTART",
+
   restart_text_style: {
     fontFamily: "Arial",
     fontSize: 56,
@@ -10,8 +12,10 @@ export const GAME_OVER_CONSTANTS = {
     y: 200,
   },
 
+  game_over_text: "GAME OVER ! YOUR SCORE:",
+
   game_over_text_style: {
-    // align: "center",
+    align: "center",
     fontFamily: "Arial",
     fontSize: 44,
     fill: "black",
@@ -26,6 +30,6 @@ export const GAME_OVER_CONSTANTS = {
 
   container: {
     x: 800,
-    y: 400,
+    y: 360,
   },
 };
