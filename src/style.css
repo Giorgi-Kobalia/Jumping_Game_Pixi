@@ -5,6 +5,6 @@ body {
   height: 98vh;
 }
 
-#app{
+#app canvas {
   border: 5px solid #000;
-  }
+}

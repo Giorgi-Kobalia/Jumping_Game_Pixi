@@ -8,8 +8,8 @@ export const GAME_OVER_CONSTANTS = {
   },
 
   restar_text_position: {
-    x: 250,
-    y: 200,
+    x: 40,
+    y: 140,
   },
 
   game_over_text: "GAME OVER ! YOUR SCORE:",
@@ -23,13 +23,8 @@ export const GAME_OVER_CONSTANTS = {
     wordWrapWidth: 400,
   },
 
-  game_over_text_position: {
-    x: 250,
-    y: 80,
-  },
-
   container: {
     x: 800,
-    y: 360,
+    y: 320,
   },
 };

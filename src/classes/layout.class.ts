@@ -65,10 +65,15 @@ export class Layout {
       this.cactus.container.x = 1600;
       this.jumpCounter++;
       this.counter.updateCounter(this.jumpCounter);
+      if (this.jumpCounter && this.jumpCounter % 3 === 0) {
+        this.cactusSpeed *= 1.1;
+        console.log(this.cactusSpeed);
+      }
     }
 
     if (this.checkCollision()) {
       this.gameOver = true;
+      this.counter.container.visible = false;
       this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
       this.container.addChild(this.gameOverPopUp.container);
       this.ticker.stop();
@@ -100,9 +105,11 @@ export class Layout {
   }
 
   applyJumpPhysics() {
+    const speedFactor = this.cactusSpeed / CACTUS_CONSTANTS.cactus.speed;
+
     if (this.isJumping) {
-      this.cat.container.y += this.jumpVelocity;
-      this.jumpVelocity += this.gravity;
+      this.cat.container.y += this.jumpVelocity * speedFactor;
+      this.jumpVelocity += this.gravity * speedFactor;
 
       if (this.cat.container.y >= CAT_CONSTANTS.container.y) {
         this.cat.container.y = CAT_CONSTANTS.container.y;
@@ -124,6 +131,7 @@ export class Layout {
   }
 
   resetGame = () => {
+    this.counter.container.visible = true;
     this.cactus.container.x = CACTUS_CONSTANTS.container.x;
     this.cat.container.y = CAT_CONSTANTS.container.y;
     this.cactusSpeed = CACTUS_CONSTANTS.cactus.speed;
