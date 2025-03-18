@@ -4,3 +4,7 @@ body {
   align-items: center;
   height: 98vh;
 }
+
+#app{
+  border: 5px solid #000;
+  }

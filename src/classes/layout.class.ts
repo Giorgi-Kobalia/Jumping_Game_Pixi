@@ -1,5 +1,5 @@
 import { Container, Ticker } from "pixi.js";
-import { Cat, Cactus, Counter, GameOver } from ".";
+import { Cat, Cactus, Counter, GameOver, Sky, Ground } from ".";
 import { CACTUS_CONSTANTS, CAT_CONSTANTS } from "../constants";
 
 export class Layout {
@@ -9,6 +9,8 @@ export class Layout {
   public cactus = new Cactus();
   public counter = new Counter();
   public gameOverPopUp = new GameOver();
+  public sky = new Sky();
+  public ground = new Ground();
 
   public cactusSpeed = CACTUS_CONSTANTS.cactus.speed;
   public jumpCounter = 0;
@@ -24,11 +26,15 @@ export class Layout {
     this.cat.init();
     this.cactus.init();
     this.counter.init();
+    this.sky.init();
+    this.ground.init();
 
     this.container.addChild(
       this.cat.container,
       this.cactus.container,
-      this.counter.container
+      this.counter.container,
+      this.sky.container,
+      this.ground.container
     );
 
     this.gameLogic();
@@ -47,6 +53,7 @@ export class Layout {
 
     this.ticker.add(() => {
       this.moveCactus();
+      this.moveSkyAndGround();
       this.applyJumpPhysics();
     });
   }
@@ -66,6 +73,23 @@ export class Layout {
       this.container.addChild(this.gameOverPopUp.container);
       this.ticker.stop();
     }
+  }
+
+  moveSkyAndGround() {
+    this.sky.skyElements.forEach((element) => {
+      element.x -= this.cactusSpeed / 8;
+
+      if (element.x + element.width < 0) {
+        element.x = 1600;
+      }
+    });
+    this.ground.groundElements.forEach((element) => {
+      element.x -= this.cactusSpeed;
+
+      if (element.x + element.width < 0) {
+        element.x = 1600;
+      }
+    });
   }
 
   handleJump() {

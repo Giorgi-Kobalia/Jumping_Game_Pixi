@@ -11,6 +11,10 @@ async function startGame() {
   Assets.addBundle("images", {
     cat: "./images/cat.png",
     cactus: "./images/cactus.png",
+    sky1: "./images/sky1.png",
+    sky2: "./images/sky2.png",
+    bush1: "./images/bush1.png",
+    bush2: "./images/bush2.png",
   });
 
   await Assets.loadBundle(["images"]);
@@ -18,7 +22,7 @@ async function startGame() {
   await app.init({
     width: 1600,
     height: 800,
-    backgroundColor: 0x87ceeb,
+    backgroundColor: "white",
     antialias: true,
   });
 
