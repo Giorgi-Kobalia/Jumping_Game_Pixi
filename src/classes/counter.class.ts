@@ -20,6 +20,8 @@ export class Counter {
       COUNTER_CONSTANTS.container.y
     );
 
+    this.jumpCounterText.resolution = 2;
+
     this.container.addChild(this.jumpCounterText);
   }
 

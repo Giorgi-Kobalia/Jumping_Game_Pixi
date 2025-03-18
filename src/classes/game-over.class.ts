@@ -29,6 +29,8 @@ export class GameOver {
 
     this.restart.eventMode = "dynamic";
     this.restart.cursor = "pointer";
+    this.restart.resolution = 2;
+    gameOverText.resolution = 2;
 
     this.container.addChild(gameOverText, this.restart);
 
