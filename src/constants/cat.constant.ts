@@ -1,10 +1,10 @@
 export const CAT_CONSTANTS = {
   cat: {
-    width: 116,
-    height: 148,
+    width: 256,
+    height: 256,
   },
   container: {
-    x: 150,
-    y: 480,
+    x: 20,
+    y: 360,
   },
 };

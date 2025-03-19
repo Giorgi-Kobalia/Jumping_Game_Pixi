@@ -9,7 +9,7 @@ const gameScene = document.getElementById("app");
 
 async function startGame() {
   Assets.addBundle("images", {
-    cat: "./images/cat.png",
+    idle: "./images/homeless/idle.json",
     cactus: "./images/cactus.png",
 
     ground: "./images/bg/layer_1_ground.png",
