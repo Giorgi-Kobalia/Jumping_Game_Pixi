@@ -1,6 +1,6 @@
-import { Container, Ticker } from "pixi.js";
-import { Cat, Cactus, Counter, GameOver, Sky, Ground } from ".";
-import { CACTUS_CONSTANTS, CAT_CONSTANTS } from "../constants";
+import { Container, Ticker, TilingSprite } from "pixi.js";
+import { Cat, Cactus, Counter, GameOver, Bg } from ".";
+import { bgObjects, CACTUS_CONSTANTS, CAT_CONSTANTS } from "../constants";
 
 export class Layout {
   public container = new Container();
@@ -9,10 +9,10 @@ export class Layout {
   public cactus = new Cactus();
   public counter = new Counter();
   public gameOverPopUp = new GameOver();
-  public sky = new Sky();
-  public ground = new Ground();
+  public bg = new Bg();
 
-  public cactusSpeed = CACTUS_CONSTANTS.cactus.speed;
+  public initialCactusSpeed = 8;
+  public cactusSpeed = this.initialCactusSpeed;
   public jumpCounter = 0;
   public isJumping = false;
   public jumpVelocity = 0;
@@ -23,18 +23,16 @@ export class Layout {
   public ticker = new Ticker();
 
   init() {
+    this.bg.init();
     this.cat.init();
     this.cactus.init();
     this.counter.init();
-    this.sky.init();
-    this.ground.init();
 
     this.container.addChild(
+      this.bg.container,
       this.cat.container,
       this.cactus.container,
-      this.counter.container,
-      this.sky.container,
-      this.ground.container
+      this.counter.container
     );
 
     this.gameLogic();
@@ -46,16 +44,17 @@ export class Layout {
     this.gameOverPopUp.onClose = () => {
       this.resetGame();
     };
+
   }
 
   gameLogic() {
-    this.ticker.maxFPS = 90 
+    this.ticker.maxFPS = 90;
     this.ticker.start();
 
     this.ticker.add(() => {
-      this.moveCactus();
-      this.moveSkyAndGround();
+      // this.moveCactus();
       this.applyJumpPhysics();
+      this.paralaxAnimation();
     });
   }
 
@@ -67,35 +66,27 @@ export class Layout {
       this.jumpCounter++;
       this.counter.updateCounter(this.jumpCounter);
       if (this.jumpCounter && this.jumpCounter % 3 === 0) {
-        if (this.cactusSpeed >= 30) return;
+        if (this.cactusSpeed >= 20) return;
         this.cactusSpeed *= 1.1;
       }
     }
 
-    if (this.checkCollision()) {
-      this.gameOver = true;
-      this.counter.container.visible = false;
-      this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
-      this.container.addChild(this.gameOverPopUp.container);
-      this.ticker.stop();
-    }
+    // if (this.checkCollision()) {
+    //   this.gameOver = true;
+    //   this.counter.container.visible = false;
+    //   this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
+    //   this.container.addChild(this.gameOverPopUp.container);
+    //   this.ticker.stop(); 
+    // }
   }
 
-  moveSkyAndGround() {
-    this.sky.skyElements.forEach((element) => {
-      element.x -= this.cactusSpeed / 8;
+  paralaxAnimation() {
+    for (let i = 0; i < this.bg.bgElements.length; i++) {
+      const paralaxSpeed = bgObjects[i].speed;
+      const sprite = this.bg.bgElements[i] as TilingSprite;
 
-      if (element.x + element.width < 0) {
-        element.x = 1600;
-      }
-    });
-    this.ground.groundElements.forEach((element) => {
-      element.x -= this.cactusSpeed;
-
-      if (element.x + element.width < 0) {
-        element.x = 1600;
-      }
-    });
+      sprite.tilePosition.x -= this.cactusSpeed * paralaxSpeed;
+    }
   }
 
   handleJump() {
@@ -106,7 +97,7 @@ export class Layout {
   }
 
   applyJumpPhysics() {
-    const speedFactor = this.cactusSpeed / CACTUS_CONSTANTS.cactus.speed;
+    const speedFactor = this.cactusSpeed / this.initialCactusSpeed;
 
     if (this.isJumping) {
       this.cat.container.y += this.jumpVelocity * speedFactor;
@@ -135,7 +126,7 @@ export class Layout {
     this.counter.container.visible = true;
     this.cactus.container.x = CACTUS_CONSTANTS.container.x;
     this.cat.container.y = CAT_CONSTANTS.container.y;
-    this.cactusSpeed = CACTUS_CONSTANTS.cactus.speed;
+    this.cactusSpeed = this.initialCactusSpeed;
     this.gameOver = false;
     this.isJumping = false;
     this.jumpVelocity = 0;

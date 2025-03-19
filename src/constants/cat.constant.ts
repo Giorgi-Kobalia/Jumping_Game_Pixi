@@ -5,6 +5,6 @@ export const CAT_CONSTANTS = {
   },
   container: {
     x: 150,
-    y: 450,
+    y: 480,
   },
 };

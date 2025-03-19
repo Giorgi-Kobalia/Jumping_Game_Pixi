@@ -3,5 +3,4 @@ export * from "./cat.class";
 export * from "./cactus.class";
 export * from "./counter.class";
 export * from "./game-over.class";
-export * from "./sky.class";
-export * from "./ground.class";
+export * from "./bg.class";

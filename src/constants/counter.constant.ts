@@ -6,6 +6,6 @@ export const COUNTER_CONSTANTS = {
   },
   container: {
     x: 700,
-    y: 210,
+    y: 0,
   },
 };
