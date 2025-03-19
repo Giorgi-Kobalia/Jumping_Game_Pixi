@@ -1,37 +1,41 @@
 import { Container, Ticker, TilingSprite } from "pixi.js";
-import { Cat, Cactus, Counter, GameOver, Bg } from ".";
-import { bgObjects, CACTUS_CONSTANTS, CAT_CONSTANTS } from "../constants";
+import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
+import {
+  BG_CONSTANTS,
+  ZOMBIE_CONSTANTS,
+  HOMELESS_CONSTANTS,
+} from "../constants";
 
 export class Layout {
   public container = new Container();
 
-  public cat = new Cat();
-  public cactus = new Cactus();
+  public homeless = new Homeless();
+  public zombie = new Zombie();
   public counter = new Counter();
   public gameOverPopUp = new GameOver();
   public bg = new Bg();
 
-  public initialCactusSpeed = 8;
-  public cactusSpeed = this.initialCactusSpeed;
+  public initialZombieSpeed = 8;
+  public zombieSpeed = this.initialZombieSpeed;
   public jumpCounter = 0;
   public isJumping = false;
   public jumpVelocity = 0;
   public gravity = 0.5;
-  public jumpStrength = -15;
+  public jumpStrength = -11;
   public gameOver?: boolean;
 
   public ticker = new Ticker();
 
   init() {
     this.bg.init();
-    this.cat.init();
-    this.cactus.init();
+    this.homeless.init();
+    this.zombie.init();
     this.counter.init();
 
     this.container.addChild(
       this.bg.container,
-      this.cat.container,
-      this.cactus.container,
+      this.homeless.container,
+      this.zombie.container,
       this.counter.container
     );
 
@@ -44,7 +48,6 @@ export class Layout {
     this.gameOverPopUp.onClose = () => {
       this.resetGame();
     };
-
   }
 
   gameLogic() {
@@ -52,23 +55,23 @@ export class Layout {
     this.ticker.start();
 
     this.ticker.add(() => {
-      // this.moveCactus();
+      this.moveZombie();
       this.applyJumpPhysics();
       this.paralaxAnimation();
     });
   }
 
-  moveCactus() {
-    this.cactus.container.x -= this.cactusSpeed;
+  moveZombie() {
+    this.zombie.container.x -= this.zombieSpeed;
 
-    if (this.cactus.container.x + this.cactus.container.width < 0) {
-      this.cactus.container.x = 1600;
+    if (this.zombie.container.x + this.zombie.container.width < 0) {
+      this.zombie.container.x = 1600;
       this.jumpCounter++;
       this.counter.updateCounter(this.jumpCounter);
-      if (this.jumpCounter && this.jumpCounter % 3 === 0) {
-        if (this.cactusSpeed >= 20) return;
-        this.cactusSpeed *= 1.1;
-      }
+      // if (this.jumpCounter && this.jumpCounter % 3 === 0) {
+      //   if (this.zombieSpeed >= 20) return;
+      //   this.zombieSpeed *= 1.1;
+      // }
     }
 
     // if (this.checkCollision()) {
@@ -76,16 +79,16 @@ export class Layout {
     //   this.counter.container.visible = false;
     //   this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
     //   this.container.addChild(this.gameOverPopUp.container);
-    //   this.ticker.stop(); 
+    //   this.ticker.stop();
     // }
   }
 
   paralaxAnimation() {
     for (let i = 0; i < this.bg.bgElements.length; i++) {
-      const paralaxSpeed = bgObjects[i].speed;
+      const paralaxSpeed = BG_CONSTANTS[i].speed;
       const sprite = this.bg.bgElements[i] as TilingSprite;
 
-      sprite.tilePosition.x -= this.cactusSpeed * paralaxSpeed;
+      sprite.tilePosition.x -= this.zombieSpeed * paralaxSpeed;
     }
   }
 
@@ -93,40 +96,41 @@ export class Layout {
     if (!this.isJumping) {
       this.isJumping = true;
       this.jumpVelocity = this.jumpStrength;
+      this.homeless.sprite?.gotoAndPlay(0);
     }
   }
 
   applyJumpPhysics() {
-    const speedFactor = this.cactusSpeed / this.initialCactusSpeed;
+    const speedFactor = this.zombieSpeed / this.initialZombieSpeed;
 
     if (this.isJumping) {
-      this.cat.container.y += this.jumpVelocity * speedFactor;
+      this.homeless.container.y += this.jumpVelocity * speedFactor;
       this.jumpVelocity += this.gravity * speedFactor;
 
-      if (this.cat.container.y >= CAT_CONSTANTS.container.y) {
-        this.cat.container.y = CAT_CONSTANTS.container.y;
+      if (this.homeless.container.y >= HOMELESS_CONSTANTS.container.y) {
+        this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
         this.isJumping = false;
       }
     }
   }
 
   checkCollision() {
-    const catBounds = this.cat.container.getBounds();
-    const cactusBounds = this.cactus.container.getBounds();
+    const homelessBounds = this.homeless.container.getBounds();
+    const zombieBounds = this.zombie.container.getBounds();
 
     return (
-      catBounds.x + catBounds.width > cactusBounds.x &&
-      catBounds.x < cactusBounds.x + cactusBounds.width &&
-      catBounds.y + catBounds.height > cactusBounds.y &&
-      catBounds.y < cactusBounds.y + cactusBounds.height
+      homelessBounds.x + homelessBounds.width > zombieBounds.x &&
+      homelessBounds.x < zombieBounds.x + zombieBounds.width &&
+      homelessBounds.y + homelessBounds.height > zombieBounds.y &&
+      homelessBounds.y < zombieBounds.y + zombieBounds.height
     );
   }
 
   resetGame = () => {
     this.counter.container.visible = true;
-    this.cactus.container.x = CACTUS_CONSTANTS.container.x;
-    this.cat.container.y = CAT_CONSTANTS.container.y;
-    this.cactusSpeed = this.initialCactusSpeed;
+    this.zombie.container.x = ZOMBIE_CONSTANTS.container.x;
+    this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
+    this.zombieSpeed = this.initialZombieSpeed;
     this.gameOver = false;
     this.isJumping = false;
     this.jumpVelocity = 0;

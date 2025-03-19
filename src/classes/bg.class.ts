@@ -1,13 +1,13 @@
 import { Container } from "pixi.js";
 import { createTillingSprite } from "../functions/create-tilling-sprites";
-import { bgObjects } from "../constants";
+import { BG_CONSTANTS } from "../constants";
 
 export class Bg {
   public container = new Container();
   public bgElements: Container[] = [];
 
   init() {
-    bgObjects.forEach((element) => {
+    BG_CONSTANTS.forEach((element) => {
       const spriteContainer = createTillingSprite(
         element.img,
         0,
