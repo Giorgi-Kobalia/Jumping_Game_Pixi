@@ -49,6 +49,7 @@ export class Layout {
   }
 
   gameLogic() {
+    this.ticker.maxFPS = 90 
     this.ticker.start();
 
     this.ticker.add(() => {
@@ -66,8 +67,8 @@ export class Layout {
       this.jumpCounter++;
       this.counter.updateCounter(this.jumpCounter);
       if (this.jumpCounter && this.jumpCounter % 3 === 0) {
+        if (this.cactusSpeed >= 30) return;
         this.cactusSpeed *= 1.1;
-        console.log(this.cactusSpeed);
       }
     }
 
