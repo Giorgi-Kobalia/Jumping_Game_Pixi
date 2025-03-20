@@ -47,46 +47,6 @@
       "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
       "sourceSize": { "w": 128, "h": 128 },
       "anchor": { "x": 0.5, "y": 0.5 }
-    },
-    "homeless_idle006.png": {
-      "frame": { "x": 768, "y": 0, "w": 128, "h": 128 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-      "sourceSize": { "w": 128, "h": 128 },
-      "anchor": { "x": 0.5, "y": 0.5 }
-    },
-    "homeless_idle007.png": {
-      "frame": { "x": 896, "y": 0, "w": 128, "h": 128 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-      "sourceSize": { "w": 128, "h": 128 },
-      "anchor": { "x": 0.5, "y": 0.5 }
-    },
-    "homeless_idle008.png": {
-      "frame": { "x": 1024, "y": 0, "w": 128, "h": 128 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-      "sourceSize": { "w": 128, "h": 128 },
-      "anchor": { "x": 0.5, "y": 0.5 }
-    },
-    "homeless_idle009.png": {
-      "frame": { "x": 1152, "y": 0, "w": 128, "h": 128 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-      "sourceSize": { "w": 128, "h": 128 },
-      "anchor": { "x": 0.5, "y": 0.5 }
-    },
-    "homeless_idle010.png": {
-      "frame": { "x": 1280, "y": 0, "w": 128, "h": 128 },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-      "sourceSize": { "w": 128, "h": 128 },
-      "anchor": { "x": 0.5, "y": 0.5 }
     }
   },
   "animations": {
@@ -96,12 +56,7 @@
       "homeless_idle002.png",
       "homeless_idle003.png",
       "homeless_idle004.png",
-      "homeless_idle005.png",
-      "homeless_idle006.png",
-      "homeless_idle007.png",
-      "homeless_idle008.png",
-      "homeless_idle009.png",
-      "homeless_idle010.png"
+      "homeless_idle005.png"
     ]
   },
   "meta": {
@@ -109,8 +64,8 @@
     "version": "1.1",
     "image": "idle.png",
     "format": "RGBA8888",
-    "size": { "w": 1408, "h": 128 },
+    "size": { "w": 768, "h": 128 },
     "scale": "1",
-    "smartupdate": "$TexturePacker:SmartUpdate:b80d4075f94eb344c0aeb20ab30704fb:6e45e9e80474ca024000bcef8e1d20ad:585717d7804995c87573698b70e44cb4$"
+    "smartupdate": "$TexturePacker:SmartUpdate:250dcb288f15fbe42dc8621ce5221702:45cc9da9e89ddc8a0d23f7fa7ebb0e5c:585717d7804995c87573698b70e44cb4$"
   }
 }

@@ -1,29 +1,49 @@
 import { AnimatedSprite, Assets, Container } from "pixi.js";
-import { HOMELESS_CONSTANTS } from "../constants";
+import { HOMELESS_ANIMATION, HOMELESS_CONSTANTS } from "../constants";
+import { HomelessType, PositionType, SizeType } from "../types";
 
 export class Homeless {
   public container = new Container();
   public sprite?: AnimatedSprite;
+  private defaultPosition = HOMELESS_CONSTANTS.container;
+  private defaultSize = HOMELESS_CONSTANTS.homeless;
 
   init() {
     this.drawHomeless();
   }
 
   drawHomeless() {
-    const texture = Assets.get("homeless_dead");
+    this.setAnimation(HomelessType.HURT);
+  }
+
+  setAnimation(type: HomelessType) {
+    this.sprite?.destroy();
+
+    const texture = Assets.get(type);
     this.sprite = AnimatedSprite.fromFrames(texture.data.animations["frames"]);
-    this.sprite.width = HOMELESS_CONSTANTS.homeless.width;
-    this.sprite.height = HOMELESS_CONSTANTS.homeless.height;
 
-    this.sprite.animationSpeed = 0.2;
-    this.sprite.loop = true;
-    this.sprite.play();
-
-    this.container.position.set(
-      HOMELESS_CONSTANTS.container.x,
-      HOMELESS_CONSTANTS.container.y
-    );
+    this.setSize(this.defaultSize);
+    this.setAnimationProps(type);
+    this.setPosition(this.defaultPosition);
 
     this.container.addChild(this.sprite);
+  }
+
+  setSize(size: SizeType) {
+    if (!this.sprite) return;
+    this.sprite.setSize(size.width, size.height);
+  }
+
+  setAnimationProps(type: HomelessType) {
+    if (!this.sprite) return;
+    const { animationSpeed, loop, gotoAndPlay } = HOMELESS_ANIMATION[type];
+    this.sprite.animationSpeed = animationSpeed;
+    this.sprite.loop = loop;
+    this.sprite.gotoAndPlay(gotoAndPlay);
+  }
+
+  setPosition(position: PositionType) {
+    if (!this.sprite) return;
+    this.sprite.position.set(position.x, position.y);
   }
 }

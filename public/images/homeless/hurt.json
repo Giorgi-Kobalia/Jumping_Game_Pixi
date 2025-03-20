@@ -1,0 +1,44 @@
+{
+  "frames": {
+    "homeless_hurt000.png": {
+      "frame": { "x": 0, "y": 0, "w": 128, "h": 128 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+      "sourceSize": { "w": 128, "h": 128 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "homeless_hurt001.png": {
+      "frame": { "x": 128, "y": 0, "w": 128, "h": 128 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+      "sourceSize": { "w": 128, "h": 128 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "homeless_hurt002.png": {
+      "frame": { "x": 256, "y": 0, "w": 128, "h": 128 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+      "sourceSize": { "w": 128, "h": 128 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    }
+  },
+  "animations": {
+    "frames": [
+      "homeless_hurt000.png",
+      "homeless_hurt001.png",
+      "homeless_hurt002.png"
+    ]
+  },
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.1",
+    "image": "hurt.png",
+    "format": "RGBA8888",
+    "size": { "w": 384, "h": 128 },
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:57812355c3399f28c4aa1e51116e3b94:fcdd748678b38bdab702d5ce21d5ed2b:9dda0143683f3b079bf6b30705451832$"
+  }
+}

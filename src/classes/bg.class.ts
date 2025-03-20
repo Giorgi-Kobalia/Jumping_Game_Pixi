@@ -1,6 +1,6 @@
 import { Container } from "pixi.js";
-import { createTillingSprite } from "../functions/create-tilling-sprites";
 import { BG_CONSTANTS } from "../constants";
+import { createTillingSprite } from "../functions";
 
 export class Bg {
   public container = new Container();

@@ -28,12 +28,9 @@ async function startGame() {
 
   app.stage.addChild(layout.container);
 
-  layout.container.pivot.set(
-    layout.container.width / 2,
-    layout.container.height / 2
-  );
+  layout.container.pivot.y = layout.container.height / 2
 
-  layout.container.position.set(800, 400);
+  layout.container.position.set(0, 400);
 
   gameScene?.appendChild(app.canvas);
   (globalThis as any).__PIXI_APP__ = app;
