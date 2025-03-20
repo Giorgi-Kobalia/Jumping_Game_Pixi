@@ -14,6 +14,7 @@ export class Zombie {
 
   drawZombie() {
     this.setAnimation(ZombieType.WALK);
+    this.setPosition(this.defaultPosition);
   }
 
   setAnimation(type: ZombieType) {
@@ -24,7 +25,6 @@ export class Zombie {
 
     this.setSize(this.defaultSize);
     this.setAnimationProps(type);
-    this.setPosition(this.defaultPosition);
 
     this.container.addChild(this.sprite);
   }
@@ -44,7 +44,6 @@ export class Zombie {
   }
 
   setPosition(position: PositionType) {
-    if (!this.sprite) return;
-    this.sprite.position.set(position.x, position.y);
+    this.container.position.set(position.x, position.y);
   }
 }

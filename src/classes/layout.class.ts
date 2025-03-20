@@ -5,6 +5,7 @@ import {
   ZOMBIE_CONSTANTS,
   HOMELESS_CONSTANTS,
 } from "../constants";
+import { HomelessType, ZombieType } from "../types";
 
 export class Layout {
   public container = new Container();
@@ -16,6 +17,8 @@ export class Layout {
   public bg = new Bg();
 
   public initialZombieSpeed = 8;
+  public appearenceHomlessSpeed = 2;
+  public appearenceZombieSpeed = 2;
   public zombieSpeed = this.initialZombieSpeed;
   public jumpCounter = 0;
   public isJumping = false;
@@ -54,24 +57,20 @@ export class Layout {
     this.ticker.maxFPS = 90;
     this.ticker.start();
 
-    this.ticker.add(() => {
-      // this.moveZombie();
-      this.applyJumpPhysics();
-      // this.paralaxAnimation();
-    });
+    this.intro();
   }
 
   moveZombie() {
     this.zombie.container.x -= this.zombieSpeed;
 
     if (this.zombie.container.x + this.zombie.container.width < 0) {
-      this.zombie.container.x = 1600;
+      this.zombie.container.x = ZOMBIE_CONSTANTS.container.x;
       this.jumpCounter++;
       this.counter.updateCounter(this.jumpCounter);
-      // if (this.jumpCounter && this.jumpCounter % 3 === 0) {
-      //   if (this.zombieSpeed >= 20) return;
-      //   this.zombieSpeed *= 1.1;
-      // }
+      if (this.jumpCounter && this.jumpCounter % 3 === 0) {
+        if (this.zombieSpeed >= 20) return;
+        this.zombieSpeed *= 1.1;
+      }
     }
 
     // if (this.checkCollision()) {
@@ -96,11 +95,10 @@ export class Layout {
     if (!this.isJumping) {
       this.isJumping = true;
       this.jumpVelocity = this.jumpStrength;
-      this.homeless.sprite?.gotoAndPlay(0);
     }
   }
 
-  applyJumpPhysics() {
+  applyJumpPhysics = () => {
     const speedFactor = this.zombieSpeed / this.initialZombieSpeed;
 
     if (this.isJumping) {
@@ -112,7 +110,7 @@ export class Layout {
         this.isJumping = false;
       }
     }
-  }
+  };
 
   checkCollision() {
     const homelessBounds = this.homeless.container.getBounds();
@@ -138,5 +136,100 @@ export class Layout {
     this.counter.updateCounter(this.jumpCounter);
     this.gameOverPopUp.container.removeChildren();
     this.ticker.start();
+  };
+
+  // ALL FUNCTIONS OF INTRO
+
+  intro() {
+    this.ticker.add(this.manAppearence);
+  }
+
+  manAppearence = () => {
+    this.homeless.container.x += this.appearenceHomlessSpeed;
+    if (this.homeless.container.x >= 120) {
+      this.homeless.container.x = 120;
+      this.ticker.remove(this.manAppearence);
+      this.ticker.add(this.zombieAppearence);
+      this.manDrinkAndIdle();
+    }
+  };
+
+  manDrinkAndIdle = () => {
+    this.homeless.setAnimation(HomelessType.DRINK);
+    if (this.homeless.sprite) {
+      this.homeless.sprite.onComplete = () => {
+        this.homeless.setAnimation(HomelessType.IDLE);
+      };
+    }
+  };
+
+  manSpecial = () => {
+    this.homeless.setAnimation(HomelessType.SPECIAL);
+    if (this.homeless.sprite) {
+      this.homeless.sprite.onComplete = () => {
+        this.zombie.setAnimation(ZombieType.RUN);
+        this.homeless.setAnimation(HomelessType.RUN);
+        this.ticker.add(this.applyJumpPhysics.bind(this));
+        this.ticker.add(this.moveZombie.bind(this));
+        this.ticker.add(this.paralaxAnimation.bind(this));
+      };
+    }
+  };
+
+  // ZOMBIE
+
+  zombieAppearence = () => {
+    this.zombie.container.x -= this.appearenceZombieSpeed;
+    if (this.zombie.container.x <= 1500) {
+      this.zombie.container.x = 1500;
+      this.ticker.remove(this.zombieAppearence);
+      this.zombieEat(3);
+    }
+  };
+
+  zombieEat = (playEmount: number) => {
+    let counter = 0;
+    const maxPlays = playEmount;
+
+    if (!this.zombie.sprite) return;
+
+    this.zombie.setAnimation(ZombieType.EAT);
+
+    this.zombie.sprite.onComplete = () => {
+      if (counter < maxPlays) {
+        this.zombie.sprite?.gotoAndPlay(0);
+        counter++;
+        console.log(counter);
+      } else {
+        this.zombieIdle(2);
+      }
+    };
+  };
+
+  zombieIdle = (playEmount: number) => {
+    let counter = 0;
+    const maxPlays = playEmount;
+
+    if (!this.zombie.sprite) return;
+
+    this.zombie.setAnimation(ZombieType.IDLE);
+
+    this.zombie.sprite.onComplete = () => {
+      if (counter < maxPlays) {
+        this.zombie.sprite?.gotoAndPlay(0);
+        counter++;
+        console.log(counter);
+      } else {
+        this.manSpecial();
+      }
+    };
+  };
+
+  zombieAttack = () => {
+    this.zombie.setAnimation(ZombieType.ATTACK);
+
+    if (this.zombie.sprite) {
+      this.zombie.sprite.onComplete = () => {};
+    }
   };
 }

@@ -14,7 +14,7 @@ export const ZOMBIE_CONSTANTS = {
 export const ZOMBIE_ANIMATION = {
   [ZombieType.ATTACK]: {
     animationSpeed: 0.2,
-    loop: true,
+    loop: false,
     gotoAndPlay: 0,
   },
   [ZombieType.EAT]: {
@@ -29,7 +29,7 @@ export const ZOMBIE_ANIMATION = {
   },
   [ZombieType.IDLE]: {
     animationSpeed: 0.2,
-    loop: true,
+    loop: false,
     gotoAndPlay: 0,
   },
   [ZombieType.WALK]: {

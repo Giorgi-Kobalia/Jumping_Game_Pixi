@@ -6,19 +6,28 @@ export const HOMELESS_CONSTANTS = {
     height: 256,
   },
   container: {
-    // x: -135,
-    x: 205,
+    x: -135,
     y: 490,
   },
 };
 
 export const HOMELESS_ANIMATION = {
-  [HomelessType.DEAD]: {
+  [HomelessType.WALK]: {
     animationSpeed: 0.2,
+    loop: true,
+    gotoAndPlay: 0,
+  },
+  [HomelessType.IDLE]: {
+    animationSpeed: 0.1,
+    loop: true,
+    gotoAndPlay: 0,
+  },
+  [HomelessType.DRINK]: {
+    animationSpeed: 0.1,
     loop: false,
     gotoAndPlay: 0,
   },
-  [HomelessType.JUMP]: {
+  [HomelessType.SPECIAL]: {
     animationSpeed: 0.2,
     loop: false,
     gotoAndPlay: 0,
@@ -28,27 +37,17 @@ export const HOMELESS_ANIMATION = {
     loop: true,
     gotoAndPlay: 0,
   },
-  [HomelessType.DRINK]: {
+  [HomelessType.JUMP]: {
     animationSpeed: 0.2,
     loop: false,
-    gotoAndPlay: 0,
-  },
-  [HomelessType.WALK]: {
-    animationSpeed: 0.2,
-    loop: true,
-    gotoAndPlay: 0,
-  },
-  [HomelessType.SPECIAL]: {
-    animationSpeed: 0.2,
-    loop: false,
-    gotoAndPlay: 0,
-  },
-  [HomelessType.IDLE]: {
-    animationSpeed: 0.2,
-    loop: true,
     gotoAndPlay: 0,
   },
   [HomelessType.HURT]: {
+    animationSpeed: 0.2,
+    loop: false,
+    gotoAndPlay: 0,
+  },
+  [HomelessType.DEAD]: {
     animationSpeed: 0.2,
     loop: false,
     gotoAndPlay: 0,

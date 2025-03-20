@@ -13,7 +13,8 @@ export class Homeless {
   }
 
   drawHomeless() {
-    this.setAnimation(HomelessType.HURT);
+    this.setAnimation(HomelessType.WALK);
+    this.setPosition(this.defaultPosition);
   }
 
   setAnimation(type: HomelessType) {
@@ -24,7 +25,6 @@ export class Homeless {
 
     this.setSize(this.defaultSize);
     this.setAnimationProps(type);
-    this.setPosition(this.defaultPosition);
 
     this.container.addChild(this.sprite);
   }
@@ -43,7 +43,6 @@ export class Homeless {
   }
 
   setPosition(position: PositionType) {
-    if (!this.sprite) return;
-    this.sprite.position.set(position.x, position.y);
+    this.container.position.set(position.x, position.y);
   }
 }
