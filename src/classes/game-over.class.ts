@@ -1,4 +1,4 @@
-import { Container, Text, TextStyleOptions } from "pixi.js";
+import { Container, Graphics, Text, TextStyleOptions } from "pixi.js";
 import { GAME_OVER_CONSTANTS } from "../constants";
 
 export class GameOver {
@@ -11,6 +11,10 @@ export class GameOver {
   }
 
   drawGameOverPopUp(value: number) {
+    const bg = new Graphics();
+    const adjustment = 70;
+    bg.rect(0, 0, 400, 300).fill("#99a8a7");
+
     this.restart = new Text({
       text: `${GAME_OVER_CONSTANTS.restart_text}`,
       style: GAME_OVER_CONSTANTS.restart_text_style,
@@ -22,17 +26,20 @@ export class GameOver {
         GAME_OVER_CONSTANTS.game_over_text_style as Partial<TextStyleOptions>,
     });
 
-    this.restart.position.set(
-      GAME_OVER_CONSTANTS.restar_text_position.x,
-      GAME_OVER_CONSTANTS.restar_text_position.y
-    );
+    gameOverText.anchor.set(0.5);
+
+    gameOverText.position.set(bg.width / 2, bg.height / 2 - adjustment);
+
+    this.restart.anchor.set(0.5);
+
+    this.restart.position.set(bg.width / 2, bg.height / 2 + adjustment);
 
     this.restart.eventMode = "dynamic";
     this.restart.cursor = "pointer";
     this.restart.resolution = 2;
     gameOverText.resolution = 2;
 
-    this.container.addChild(gameOverText, this.restart);
+    this.container.addChild(bg, gameOverText, this.restart);
 
     this.container.position.set(
       GAME_OVER_CONSTANTS.container.x,

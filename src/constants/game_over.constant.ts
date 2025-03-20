@@ -7,11 +7,6 @@ export const GAME_OVER_CONSTANTS = {
     fill: "black",
   },
 
-  restar_text_position: {
-    x: 40,
-    y: 140,
-  },
-
   game_over_text: "GAME OVER ! YOUR SCORE:",
 
   game_over_text_style: {
