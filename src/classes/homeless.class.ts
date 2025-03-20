@@ -1,9 +1,10 @@
-import { AnimatedSprite, Assets, Container } from "pixi.js";
+import { AnimatedSprite, Assets, Container, Graphics } from "pixi.js";
 import { HOMELESS_ANIMATION, HOMELESS_CONSTANTS } from "../constants";
 import { HomelessType, PositionType, SizeType } from "../types";
 
 export class Homeless {
   public container = new Container();
+  public hitBoxContainer = new Container();
   public sprite?: AnimatedSprite;
   private defaultPosition = HOMELESS_CONSTANTS.container;
   private defaultSize = HOMELESS_CONSTANTS.homeless;
@@ -15,6 +16,21 @@ export class Homeless {
   drawHomeless() {
     this.setAnimation(HomelessType.WALK);
     this.setPosition(this.defaultPosition);
+    this.setHitBox();
+  }
+
+  setHitBox() {
+    if (!this.sprite) return;
+
+    const hitboxWidth = 30;
+    const hitboxHeight = 120;
+    const hitbox = new Graphics();
+    hitbox.rect(0, 0, hitboxWidth, hitboxHeight).fill("transparent");
+
+    this.hitBoxContainer.position.set(-28, 0);
+
+    this.hitBoxContainer.addChild(hitbox);
+    this.container.addChild(this.hitBoxContainer);
   }
 
   setAnimation(type: HomelessType) {

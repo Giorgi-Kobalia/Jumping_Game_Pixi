@@ -29,7 +29,7 @@ export const ZOMBIE_ANIMATION = {
   },
   [ZombieType.IDLE]: {
     animationSpeed: 0.2,
-    loop: false,
+    loop: true,
     gotoAndPlay: 0,
   },
   [ZombieType.WALK]: {

@@ -1,9 +1,10 @@
-import { AnimatedSprite, Assets, Container } from "pixi.js";
+import { AnimatedSprite, Assets, Container, Graphics } from "pixi.js";
 import { ZOMBIE_ANIMATION, ZOMBIE_CONSTANTS } from "../constants";
 import { ZombieType, PositionType, SizeType } from "../types";
 
 export class Zombie {
   public container = new Container();
+  public hitBoxContainer = new Container();
   public sprite?: AnimatedSprite;
   private defaultPosition = ZOMBIE_CONSTANTS.container;
   private defaultSize = ZOMBIE_CONSTANTS.zombie;
@@ -15,6 +16,21 @@ export class Zombie {
   drawZombie() {
     this.setAnimation(ZombieType.WALK);
     this.setPosition(this.defaultPosition);
+    this.setHitBox();
+  }
+
+  setHitBox() {
+    if (!this.sprite) return;
+
+    const hitboxWidth = 30;
+    const hitboxHeight = 100;
+    const hitbox = new Graphics();
+    hitbox.rect(0, 0, hitboxWidth, hitboxHeight).fill("transparent");
+
+    this.hitBoxContainer.position.set(-50, 0);
+
+    this.hitBoxContainer.addChild(hitbox);
+    this.container.addChild(this.hitBoxContainer);
   }
 
   setAnimation(type: ZombieType) {
