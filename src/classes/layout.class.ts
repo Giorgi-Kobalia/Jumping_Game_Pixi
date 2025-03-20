@@ -55,9 +55,9 @@ export class Layout {
     this.ticker.start();
 
     this.ticker.add(() => {
-      this.moveZombie();
+      // this.moveZombie();
       this.applyJumpPhysics();
-      this.paralaxAnimation();
+      // this.paralaxAnimation();
     });
   }
 

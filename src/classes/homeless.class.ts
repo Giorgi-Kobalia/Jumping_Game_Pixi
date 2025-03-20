@@ -10,7 +10,7 @@ export class Homeless {
   }
 
   drawHomeless() {
-    const texture = Assets.get("homeless_run");
+    const texture = Assets.get("homeless_dead");
     this.sprite = AnimatedSprite.fromFrames(texture.data.animations["frames"]);
     this.sprite.width = HOMELESS_CONSTANTS.homeless.width;
     this.sprite.height = HOMELESS_CONSTANTS.homeless.height;

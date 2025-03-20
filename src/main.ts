@@ -1,5 +1,6 @@
 import { Application, Assets } from "pixi.js";
 import { Layout } from "./classes";
+import { bg_manifest, homeless_manifest, zombie_manifest } from "./manifests";
 
 const app = new Application();
 
@@ -9,30 +10,9 @@ const gameScene = document.getElementById("app");
 
 async function startGame() {
   Assets.addBundle("images", {
-    cactus: "./images/cactus.png",
-
-    homeless_dead: "./images/homeless/dead.json",
-    homeless_jump: "./images/homeless/jump.json",
-    homeless_run: "./images/homeless/run.json",
-    homeless_idle: "./images/homeless/idle.json",
-    homeless_walk: "./images/homeless/walk.json",
-    homeless_special: "./images/homeless/special.json",
-
-    zombie_run: "./images/zombie/run.json",
-    zombie_idle: "./images/zombie/idle.json",
-    zombie_walk: "./images/zombie/walk.json",
-    zombie_eat: "./images/zombie/eat.json",
-    zombie_attack: "./images/zombie/attack.json",
-
-    ground: "./images/bg/layer_1_ground.png",
-    stars: "./images/bg/layer_2_stars.png",
-    moon: "./images/bg/layer_3_moon.png",
-    clouds1: "./images/bg/layer_4_clouds_1.png",
-    clouds2: "./images/bg/layer_5_clouds_2.png",
-    farBuildings: "./images/bg/layer_6_far_buildings.png",
-    bgBuildings: "./images/bg/layer_7_bg_buildings.png",
-    fgBuildings: "./images/bg/layer_8_fg_buildings.png",
-    wall: "./images/bg/layer_9_wall.png",
+    ...homeless_manifest,
+    ...zombie_manifest,
+    ...bg_manifest,
   });
 
   await Assets.loadBundle(["images"]);

@@ -10,7 +10,7 @@ export class Zombie {
   }
 
   drawZombie() {
-    const texture = Assets.get("zombie_run");
+    const texture = Assets.get("zombie_attack");
     this.sprite = AnimatedSprite.fromFrames(texture.data.animations["frames"]);
     this.sprite.width = ZOMBIE_CONSTANTS.zombie.width;
     this.sprite.height = ZOMBIE_CONSTANTS.zombie.height;
