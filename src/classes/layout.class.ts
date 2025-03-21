@@ -24,6 +24,7 @@ export class Layout {
   public zombieSpeed = this.initialZombieSpeed;
   public jumpCounter = 0;
   public isJumping = false;
+  public gameWasStarted = false;
   public jumpVelocity = 0;
   public gravity = 0.5;
   public jumpStrength = -12;
@@ -52,10 +53,6 @@ export class Layout {
 
     this.gameLogic();
 
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "Space") this.handleJump();
-    });
-
     this.gameOverPopUp.onClose = () => {
       this.resetGame();
     };
@@ -63,6 +60,10 @@ export class Layout {
     this.moveZombie = this.moveZombie.bind(this);
     this.applyJumpPhysics = this.applyJumpPhysics.bind(this);
     this.paralaxAnimation = this.paralaxAnimation.bind(this);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space") this.handleJump();
+    });
   }
 
   gameLogic() {
@@ -109,9 +110,12 @@ export class Layout {
   }
 
   handleJump() {
+    if (this.gameOver || !this.gameWasStarted) return;
+
     if (!this.isJumping) {
       this.isJumping = true;
       this.jumpVelocity = this.jumpStrength;
+      this.manJump();
     }
   }
 
@@ -125,6 +129,7 @@ export class Layout {
       if (this.homeless.container.y >= HOMELESS_CONSTANTS.container.y) {
         this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
         this.isJumping = false;
+        this.homeless.setAnimation(HomelessType.RUN);
       }
     }
   };
@@ -159,6 +164,7 @@ export class Layout {
   // ALL FUNCTIONS OF INTRO
 
   intro() {
+    this.gameWasStarted = false;
     this.ticker.add(this.manAppearence);
     // this.zombie.setAnimation(ZombieType.WALK);
     // this.homeless.setAnimation(HomelessType.WALK);
@@ -187,6 +193,7 @@ export class Layout {
     this.homeless.setAnimation(HomelessType.SPECIAL);
     if (this.homeless.sprite) {
       this.homeless.sprite.onComplete = () => {
+        this.gameWasStarted = true;
         this.zombie.setAnimation(ZombieType.RUN);
         this.homeless.setAnimation(HomelessType.RUN);
         this.ticker.add(this.applyJumpPhysics);
@@ -215,6 +222,10 @@ export class Layout {
     }
   };
 
+  manJump = () => {
+    this.homeless.setAnimation(HomelessType.JUMP);
+  };
+
   // ZOMBIE
 
   zombieAppearence = () => {
@@ -229,7 +240,7 @@ export class Layout {
   zombieEat = (playEmount: number, gameOver?: boolean) => {
     if (!this.zombie.sprite) return;
 
-    let counter = 0;
+    let counter = 1;
     this.zombie.setAnimation(ZombieType.EAT);
 
     this.zombie.sprite.onComplete = () => {

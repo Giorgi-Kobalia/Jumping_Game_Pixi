@@ -38,7 +38,7 @@ export const HOMELESS_ANIMATION = {
     gotoAndPlay: 0,
   },
   [HomelessType.JUMP]: {
-    animationSpeed: 0.2,
+    animationSpeed: 0.1,
     loop: false,
     gotoAndPlay: 0,
   },

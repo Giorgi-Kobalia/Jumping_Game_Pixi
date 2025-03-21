@@ -83,16 +83,13 @@
   },
   "animations": {
     "frames": [
-      "homeless_jump000.png",
-      "homeless_jump001.png",
-      "homeless_jump002.png",
-      "homeless_jump003.png",
       "homeless_jump004.png",
       "homeless_jump005.png",
       "homeless_jump006.png",
       "homeless_jump007.png",
       "homeless_jump008.png",
-      "homeless_jump009.png"
+      "homeless_jump009.png",
+      "homeless_jump004.png"
     ]
   },
   "meta": {
