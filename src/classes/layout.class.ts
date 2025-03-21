@@ -1,4 +1,4 @@
-import { Container, Graphics, Ticker, TilingSprite } from "pixi.js";
+import { Container, Graphics, Ticker, TilingSprite, Text } from "pixi.js";
 import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
 import {
   BG_CONSTANTS,
@@ -31,10 +31,10 @@ export class Layout {
   public gameOver?: boolean;
 
   public ticker = new Ticker();
+  public start = new Text();
 
   init() {
     sound.add("my-sound", {
-      autoPlay: true,
       loop: true,
       url: "./sounds/sound1.mp3",
     });
@@ -51,8 +51,6 @@ export class Layout {
       this.counter.container
     );
 
-    this.gameLogic();
-
     this.gameOverPopUp.onClose = () => {
       this.resetGame();
     };
@@ -64,12 +62,44 @@ export class Layout {
     window.addEventListener("keydown", (e) => {
       if (e.code === "Space") this.handleJump();
     });
+
+    this.firstStart();
+  }
+
+  firstStart() {
+    this.addDarkBg(0.5);
+    this.drawStartBtn();
+  }
+
+  drawStartBtn() {
+    this.start = new Text({
+      text: `START`,
+      style: {
+        fontFamily: "Bungeespice Regular",
+        fontSize: 140,
+        fill: "black",
+        lineHeight: 140,
+      },
+    });
+
+    this.start.eventMode = "dynamic";
+    this.start.cursor = "pointer";
+
+    this.start.pivot.set(this.start.width / 2, this.start.height / 2);
+    this.start.position.set(this.darkBg.width / 2, this.darkBg.height / 1.4);
+
+    this.container.addChild(this.start);
+
+    this.start.on("pointerdown", () => {
+      this.gameLogic();
+    });
   }
 
   gameLogic() {
+    this.container.removeChild(this.start);
+    this.container.removeChild(this.darkBg);
     this.ticker.maxFPS = 90;
     this.ticker.start();
-
     this.intro();
   }
 
@@ -165,6 +195,7 @@ export class Layout {
 
   intro() {
     this.gameWasStarted = false;
+    sound.play("my-sound");
     this.ticker.add(this.manAppearence);
   }
 
@@ -275,12 +306,13 @@ export class Layout {
     this.zombie.setAnimation(ZombieType.ATTACK);
   };
 
-  addDarkBg() {
+  addDarkBg(value: number = 0) {
     this.darkBg.clear();
     this.darkBg
-      .rect(0, 0, this.container.width, this.container.height)
+      .rect(0, 0, 1600, 566)
+
       .fill("black");
-    this.darkBg.alpha = 0;
+    this.darkBg.alpha = value;
 
     this.container.addChild(this.darkBg);
   }

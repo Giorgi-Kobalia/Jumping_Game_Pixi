@@ -6,7 +6,7 @@ export const COUNTER_CONSTANTS = {
     lineHeight: 34,
   },
   container: {
-    x: 700,
+    x: 645,
     y: 0,
   },
 };
