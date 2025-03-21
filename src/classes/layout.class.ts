@@ -6,6 +6,7 @@ import {
   HOMELESS_CONSTANTS,
 } from "../constants";
 import { HomelessType, ZombieType } from "../types";
+import { sound } from "@pixi/sound";
 
 export class Layout {
   public container = new Container();
@@ -31,6 +32,12 @@ export class Layout {
   public ticker = new Ticker();
 
   init() {
+    sound.add("my-sound", {
+      autoPlay: true,
+      loop: true,
+      url: "./sounds/sound1.mp3",
+    });
+
     this.bg.init();
     this.homeless.init();
     this.zombie.init();
