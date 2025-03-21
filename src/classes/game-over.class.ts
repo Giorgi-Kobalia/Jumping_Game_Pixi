@@ -11,6 +11,8 @@ export class GameOver {
   }
 
   drawGameOverPopUp(value: number) {
+    this.container.scale.set(1.5);
+
     const bg = new Graphics();
     const adjustment = 70;
     bg.rect(0, 0, 400, 300).fill("transparent");
@@ -45,13 +47,6 @@ export class GameOver {
       GAME_OVER_CONSTANTS.container.x,
       GAME_OVER_CONSTANTS.container.y
     );
-
-    this.container.pivot.set(
-      this.container.width / 2,
-      this.container.height / 2
-    );
-
-    this.container.scale.set(0)
 
     this.restart.addEventListener("click", this.handleClose);
   }

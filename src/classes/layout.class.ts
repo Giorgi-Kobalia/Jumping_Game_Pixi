@@ -1,4 +1,4 @@
-import { Container, Ticker, TilingSprite } from "pixi.js";
+import { Container, Graphics, Ticker, TilingSprite, v8_0_0 } from "pixi.js";
 import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
 import {
   BG_CONSTANTS,
@@ -15,6 +15,7 @@ export class Layout {
   public counter = new Counter();
   public gameOverPopUp = new GameOver();
   public bg = new Bg();
+  public darkBg = new Graphics();
 
   public initialZombieSpeed = 8;
   public appearenceHomlessSpeed = 2;
@@ -85,7 +86,6 @@ export class Layout {
       this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
       this.manHurt();
       this.zombieAttack();
-      this.ticker.stop();
       this.ticker.remove(this.applyJumpPhysics);
       this.ticker.remove(this.moveZombie);
       this.ticker.remove(this.paralaxAnimation);
@@ -145,7 +145,7 @@ export class Layout {
     this.jumpCounter = 0;
     this.counter.updateCounter(this.jumpCounter);
     this.gameOverPopUp.container.removeChildren();
-    this.ticker.start();
+    this.container.removeChild(this.darkBg);
     this.intro();
   };
 
@@ -235,8 +235,7 @@ export class Layout {
         if (!gameOver) {
           this.zombieIdle();
         } else {
-          this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
-          this.container.addChild(this.gameOverPopUp.container);
+          this.gameEnd();
         }
       }
     };
@@ -253,4 +252,33 @@ export class Layout {
   zombieAttack = () => {
     this.zombie.setAnimation(ZombieType.ATTACK);
   };
+
+  addDarkBg() {
+    this.darkBg.clear();
+    this.darkBg
+      .rect(0, 80, this.container.width, this.container.height)
+      .fill("black");
+    this.darkBg.alpha = 0;
+
+    this.container.addChild(this.darkBg);
+  }
+
+  addGameOverPopUp() {
+    this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
+    this.container.addChild(this.gameOverPopUp.container);
+  }
+
+  makeDark = () => {
+    if (this.darkBg.alpha < 0.7) {
+      this.darkBg.alpha += 0.05;
+    } else {
+      this.ticker.remove(this.makeDark);
+    }
+  };
+
+  gameEnd() {
+    this.addDarkBg();
+    this.addGameOverPopUp();
+    this.ticker.add(this.makeDark);
+  }
 }

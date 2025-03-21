@@ -19,7 +19,7 @@ export const GAME_OVER_CONSTANTS = {
   },
 
   container: {
-    x: 800,
-    y: 350,
+    x: 500,
+    y: 138,
   },
 };
