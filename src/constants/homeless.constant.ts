@@ -7,7 +7,7 @@ export const HOMELESS_CONSTANTS = {
   },
   container: {
     x: -135,
-    y: 490,
+    y: 410,
   },
 };
 

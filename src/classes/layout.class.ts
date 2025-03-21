@@ -278,7 +278,7 @@ export class Layout {
   addDarkBg() {
     this.darkBg.clear();
     this.darkBg
-      .rect(0, 80, this.container.width, this.container.height)
+      .rect(0, 0, this.container.width, this.container.height)
       .fill("black");
     this.darkBg.alpha = 0;
 

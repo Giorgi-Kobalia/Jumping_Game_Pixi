@@ -14,7 +14,7 @@ export class Bg {
       const spriteContainer = createTillingSprite(
         element.img,
         0,
-        80,
+        0,
         1600,
         566
       );
@@ -31,14 +31,14 @@ export class Bg {
     deadWoman.width = 124;
     deadWoman.height = 22;
     this.bodyContainer.addChild(deadWoman);
-    this.bodyContainer.position.set(1350, 596);
+    this.bodyContainer.position.set(1350, 516);
     this.container.addChild(this.bodyContainer);
 
     const zombieSpeach = new Sprite(Assets.get("zombieSpeach"));
     zombieSpeach.width = 200;
     zombieSpeach.height = 70;
     this.zombieSpeachContainer.addChild(zombieSpeach);
-    this.zombieSpeachContainer.position.set(1320, 480);
+    this.zombieSpeachContainer.position.set(1320, 400);
     this.zombieSpeachContainer.alpha = 0
     this.container.addChild(this.zombieSpeachContainer);
 
@@ -46,7 +46,7 @@ export class Bg {
     homelessSpeach.width = 200;
     homelessSpeach.height = 70;
     this.homelessSpeachContainer.addChild(homelessSpeach);
-    this.homelessSpeachContainer.position.set(330, 430);
+    this.homelessSpeachContainer.position.set(330, 350);
     this.homelessSpeachContainer.alpha = 0
     this.container.addChild(this.homelessSpeachContainer);
   }

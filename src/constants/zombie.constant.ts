@@ -7,7 +7,7 @@ export const ZOMBIE_CONSTANTS = {
   },
   container: {
     x: 1700,
-    y: 520,
+    y: 440,
   },
 };
 
