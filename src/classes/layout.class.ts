@@ -136,8 +136,8 @@ export class Layout {
 
   resetGame = () => {
     this.counter.container.visible = true;
-    this.zombie.container.x = ZOMBIE_CONSTANTS.container.x;
-    this.homeless.container.x = HOMELESS_CONSTANTS.container.x;
+    this.zombie.container.x = 1500;
+    this.homeless.container.x = 350;
     this.zombieSpeed = this.initialZombieSpeed;
     this.gameOver = false;
     this.isJumping = false;
@@ -153,8 +153,8 @@ export class Layout {
 
   intro() {
     this.ticker.add(this.manAppearence);
-    this.zombie.setAnimation(ZombieType.WALK);
-    this.homeless.setAnimation(HomelessType.WALK);
+    // this.zombie.setAnimation(ZombieType.WALK);
+    // this.homeless.setAnimation(HomelessType.WALK);
   }
 
   manAppearence = () => {
@@ -234,9 +234,6 @@ export class Layout {
       } else {
         if (!gameOver) {
           this.zombieIdle();
-          setTimeout(() => {
-            this.manSpecial();
-          }, 1000);
         } else {
           this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
           this.container.addChild(this.gameOverPopUp.container);
@@ -247,6 +244,10 @@ export class Layout {
 
   zombieIdle = () => {
     this.zombie.setAnimation(ZombieType.IDLE);
+    this.homeless.setAnimation(HomelessType.IDLE);
+    setTimeout(() => {
+      this.manSpecial();
+    }, 1000);
   };
 
   zombieAttack = () => {

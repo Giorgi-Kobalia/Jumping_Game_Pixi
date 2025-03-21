@@ -1,6 +1,6 @@
 export const COUNTER_CONSTANTS = {
   text_style: {
-    fontFamily: "Arial",
+    fontFamily: "Bungeespice Regular",
     fontSize: 36,
     fill: "black",
   },

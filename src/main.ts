@@ -8,32 +8,33 @@ let layout = new Layout();
 
 const gameScene = document.getElementById("app");
 
-async function startGame() {
+function startGame() {
   Assets.addBundle("images", {
     ...homeless_manifest,
     ...zombie_manifest,
     ...bg_manifest,
+    CustomFontYellow: "./BungeeSpice-Regular.ttf",
   });
 
-  await Assets.loadBundle(["images"]);
+  Assets.loadBundle(["images"]).then(async () => {
+    await app.init({
+      width: 1600,
+      height: 800,
+      backgroundColor: "white",
+      antialias: true,
+    });
 
-  await app.init({
-    width: 1600,
-    height: 800,
-    backgroundColor: "white",
-    antialias: true,
+    layout.init();
+
+    app.stage.addChild(layout.container);
+
+    layout.container.pivot.y = layout.container.height / 2;
+
+    layout.container.position.set(0, 400);
+
+    gameScene?.appendChild(app.canvas);
+    (globalThis as any).__PIXI_APP__ = app;
   });
-
-  layout.init();
-
-  app.stage.addChild(layout.container);
-
-  layout.container.pivot.y = layout.container.height / 2
-
-  layout.container.position.set(0, 400);
-
-  gameScene?.appendChild(app.canvas);
-  (globalThis as any).__PIXI_APP__ = app;
 }
 
 startGame();

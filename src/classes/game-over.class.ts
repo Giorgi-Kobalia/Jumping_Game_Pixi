@@ -13,7 +13,7 @@ export class GameOver {
   drawGameOverPopUp(value: number) {
     const bg = new Graphics();
     const adjustment = 70;
-    bg.rect(0, 0, 400, 300).fill("#99a8a7");
+    bg.rect(0, 0, 400, 300).fill("transparent");
 
     this.restart = new Text({
       text: `${GAME_OVER_CONSTANTS.restart_text}`,
@@ -50,6 +50,8 @@ export class GameOver {
       this.container.width / 2,
       this.container.height / 2
     );
+
+    this.container.scale.set(0)
 
     this.restart.addEventListener("click", this.handleClose);
   }
