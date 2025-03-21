@@ -8,4 +8,8 @@ export const bg_manifest = {
   bgBuildings: "/images/bg/layer_7_bg_buildings.png",
   fgBuildings: "/images/bg/layer_8_fg_buildings.png",
   wall: "/images/bg/layer_9_wall.png",
+
+  dead_women: "/images/bg/edditional/deadWoman.png",
+  zombieSpeach: "/images/bg/edditional/zombie_Speach.png",
+  homelessSpeach: "/images/bg/edditional/homeless_Speach.png",
 };

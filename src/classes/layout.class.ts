@@ -158,7 +158,7 @@ export class Layout {
     this.counter.updateCounter(this.jumpCounter);
     this.gameOverPopUp.container.removeChildren();
     this.container.removeChild(this.darkBg);
-    this.intro();
+    this.zombieIdle();
   };
 
   // ALL FUNCTIONS OF INTRO
@@ -166,8 +166,6 @@ export class Layout {
   intro() {
     this.gameWasStarted = false;
     this.ticker.add(this.manAppearence);
-    // this.zombie.setAnimation(ZombieType.WALK);
-    // this.homeless.setAnimation(HomelessType.WALK);
   }
 
   manAppearence = () => {
@@ -176,6 +174,7 @@ export class Layout {
       this.homeless.container.x = 350;
       this.ticker.remove(this.manAppearence);
       this.ticker.add(this.zombieAppearence);
+      this.zombie.setAnimation(ZombieType.WALK);
       this.manDrinkAndIdle();
     }
   };
@@ -190,10 +189,14 @@ export class Layout {
   };
 
   manSpecial = () => {
+    this.bg.homelessSpeachContainer.alpha = 1;
+    this.bg.zombieSpeachContainer.alpha = 0;
+
     this.homeless.setAnimation(HomelessType.SPECIAL);
     if (this.homeless.sprite) {
       this.homeless.sprite.onComplete = () => {
         this.gameWasStarted = true;
+        this.bg.homelessSpeachContainer.alpha = 0;
         this.zombie.setAnimation(ZombieType.RUN);
         this.homeless.setAnimation(HomelessType.RUN);
         this.ticker.add(this.applyJumpPhysics);
@@ -239,7 +242,6 @@ export class Layout {
 
   zombieEat = (playEmount: number, gameOver?: boolean) => {
     if (!this.zombie.sprite) return;
-
     let counter = 1;
     this.zombie.setAnimation(ZombieType.EAT);
 
@@ -251,6 +253,7 @@ export class Layout {
         counter++;
       } else {
         if (!gameOver) {
+          this.bg.bodyContainer.alpha = 0;
           this.zombieIdle();
         } else {
           this.gameEnd();
@@ -260,11 +263,12 @@ export class Layout {
   };
 
   zombieIdle = () => {
+    this.bg.zombieSpeachContainer.alpha = 1;
     this.zombie.setAnimation(ZombieType.IDLE);
     this.homeless.setAnimation(HomelessType.IDLE);
     setTimeout(() => {
       this.manSpecial();
-    }, 1000);
+    }, 2000);
   };
 
   zombieAttack = () => {
