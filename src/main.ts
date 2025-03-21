@@ -1,6 +1,7 @@
 import { Application, Assets } from "pixi.js";
 import { Layout } from "./classes";
 import { bg_manifest, homeless_manifest, zombie_manifest } from "./manifests";
+import { sound } from "@pixi/sound";
 
 const app = new Application();
 
@@ -9,11 +10,17 @@ let layout = new Layout();
 const gameScene = document.getElementById("app");
 
 function startGame() {
+  sound.add("my-sound", {
+    autoPlay: true,
+    loop: true,
+    url: "./sounds/sound1.mp3",
+  });
+
   Assets.addBundle("images", {
     ...homeless_manifest,
     ...zombie_manifest,
     ...bg_manifest,
-    CustomFontYellow: "./BungeeSpice-Regular.ttf",
+    CustomFontYellow: "./fonts/BungeeSpice-Regular.ttf",
   });
 
   Assets.loadBundle(["images"]).then(async () => {

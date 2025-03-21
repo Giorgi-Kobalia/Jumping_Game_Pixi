@@ -1,4 +1,4 @@
-import { Container, Graphics, Ticker, TilingSprite, v8_0_0 } from "pixi.js";
+import { Container, Graphics, Ticker, TilingSprite } from "pixi.js";
 import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
 import {
   BG_CONSTANTS,
