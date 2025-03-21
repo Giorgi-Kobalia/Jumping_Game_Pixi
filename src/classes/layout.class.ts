@@ -225,6 +225,7 @@ export class Layout {
     this.gameOverPopUp.container.removeChildren();
     this.container.removeChild(this.darkBg);
     this.zombieIdle();
+    this.gameWasStarted = false;
   };
 
   // ALL FUNCTIONS OF INTRO
