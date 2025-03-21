@@ -1,4 +1,12 @@
-import { Container, Graphics, Ticker, TilingSprite, Text } from "pixi.js";
+import {
+  Container,
+  Graphics,
+  Ticker,
+  TilingSprite,
+  Text,
+  Assets,
+  Sprite,
+} from "pixi.js";
 import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
 import {
   BG_CONSTANTS,
@@ -17,6 +25,7 @@ export class Layout {
   public gameOverPopUp = new GameOver();
   public bg = new Bg();
   public darkBg = new Graphics();
+  public soundIcon = new Sprite();
 
   public initialZombieSpeed = 8;
   public appearenceHomlessSpeed = 2;
@@ -26,6 +35,7 @@ export class Layout {
   public isJumping = false;
   public gameWasStarted = false;
   public jumpVelocity = 0;
+  public soundOn = false;
   public gravity = 0.5;
   public jumpStrength = -12;
   public gameOver?: boolean;
@@ -91,6 +101,7 @@ export class Layout {
     this.container.addChild(this.start);
 
     this.start.on("pointerdown", () => {
+      this.soundOn = !this.soundOn;
       this.gameLogic();
     });
   }
@@ -98,9 +109,34 @@ export class Layout {
   gameLogic() {
     this.container.removeChild(this.start);
     this.container.removeChild(this.darkBg);
+    this.drawSoundIcon(this.soundOn);
     this.ticker.maxFPS = 90;
     this.ticker.start();
     this.intro();
+  }
+
+  drawSoundIcon(value: boolean) {
+    if (this.soundIcon) {
+      this.container.removeChild(this.soundIcon);
+    }
+    console.log(1);
+
+    this.soundIcon = new Sprite(Assets.get(`sound_${value}`));
+    this.soundIcon.position.set(10, 10);
+    this.soundIcon.eventMode = "dynamic";
+    this.soundIcon.cursor = "pointer";
+    this.soundIcon.width = 50;
+    this.soundIcon.height = 50;
+    this.soundIcon.on("pointerdown", () => {
+      this.soundOn = !this.soundOn;
+      this.drawSoundIcon(this.soundOn);
+      if (this.soundOn) {
+        sound.unmuteAll();
+      } else {
+        sound.muteAll();
+      }
+    });
+    this.container.addChild(this.soundIcon);
   }
 
   moveZombie() {

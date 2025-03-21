@@ -3,10 +3,9 @@ body {
   justify-content: center;
   align-items: center;
   height: 98vh;
+  background-color: #577277;
 }
 
 #app canvas {
   border: 5px solid #000;
 }
-
-
