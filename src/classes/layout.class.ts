@@ -110,7 +110,7 @@ export class Layout {
     this.container.removeChild(this.start);
     this.container.removeChild(this.darkBg);
     this.drawSoundIcon(this.soundOn);
-    this.ticker.maxFPS = 90;
+    this.ticker.maxFPS = 60;
     this.ticker.start();
     this.intro();
   }
