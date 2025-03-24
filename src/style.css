@@ -18,12 +18,13 @@ body {
   border: 5px solid #000;
   width: 100%;
   max-width: 1600px;
-  /* transform: rotate(90deg); */
 }
 
 #rotate-message {
   font-size: 40px;
   text-transform: uppercase;
+  text-align: center;
+  font-weight: bolder;
 }
 
 .hiden {
