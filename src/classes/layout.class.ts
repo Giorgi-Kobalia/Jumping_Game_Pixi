@@ -44,11 +44,6 @@ export class Layout {
   public start = new Text();
 
   init() {
-    sound.add("my-sound", {
-      loop: true,
-      url: "./sounds/sound1.mp3",
-    });
-
     this.bg.init();
     this.homeless.init();
     this.zombie.init();
@@ -119,7 +114,6 @@ export class Layout {
     if (this.soundIcon) {
       this.container.removeChild(this.soundIcon);
     }
-    console.log(1);
 
     this.soundIcon = new Sprite(Assets.get(`sound_${value}`));
     this.soundIcon.position.set(10, 10);

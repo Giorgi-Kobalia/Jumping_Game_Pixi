@@ -1,6 +1,7 @@
 import { Application, Assets } from "pixi.js";
 import { Layout } from "./classes";
 import { bg_manifest, homeless_manifest, zombie_manifest } from "./manifests";
+import { sound } from "@pixi/sound";
 
 const app = new Application();
 
@@ -14,6 +15,7 @@ function startGame() {
     ...zombie_manifest,
     ...bg_manifest,
     CustomFontYellow: "./fonts/BungeeSpice-Regular.ttf",
+    music: "./sounds/sound1.mp3",
   });
 
   Assets.loadBundle(["images"]).then(async () => {
@@ -22,6 +24,11 @@ function startGame() {
       height: 566,
       backgroundColor: "white",
       antialias: true,
+    });
+
+    sound.add("my-sound", {
+      loop: true,
+      url: Assets.get("music").url,
     });
 
     layout.init();
