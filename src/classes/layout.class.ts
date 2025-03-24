@@ -107,17 +107,15 @@ export class Layout {
   }
 
   pauseGame() {
-    if (this.gameWasStarted) {
-      this.ticker.stop();
-      sound.pause("my-sound");
+    this.ticker.stop();
+    if (sound.isPlaying() === true) {
+      sound.muteAll();
     }
   }
 
   resumeGame() {
-    if (this.gameWasStarted) {
-      this.ticker.start();
-      sound.resume("my-sound");
-    }
+    this.ticker.start();
+    sound.unmuteAll();
   }
 
   drawSoundIcon(value: boolean) {
