@@ -64,7 +64,7 @@ function startGame() {
     elem.requestFullscreen();
   }
 
-  goFullscreen();
+  document.addEventListener("click", goFullscreen);
 }
 
 startGame();
