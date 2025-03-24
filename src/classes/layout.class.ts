@@ -106,6 +106,20 @@ export class Layout {
     this.intro();
   }
 
+  pauseGame() {
+    if (this.gameWasStarted) {
+      this.ticker.stop();
+      sound.pause("my-sound");
+    }
+  }
+
+  resumeGame() {
+    if (this.gameWasStarted) {
+      this.ticker.start();
+      sound.resume("my-sound");
+    }
+  }
+
   drawSoundIcon(value: boolean) {
     if (this.soundIcon) {
       this.container.removeChild(this.soundIcon);

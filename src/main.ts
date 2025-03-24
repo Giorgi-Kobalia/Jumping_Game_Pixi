@@ -12,12 +12,13 @@ function checkOrientation() {
   if (window.innerWidth < window.innerHeight) {
     gameScene?.classList.add("hiden");
     rotateMessage?.classList.remove("hiden");
+    layout.pauseGame();
   } else {
     gameScene?.classList.remove("hiden");
     rotateMessage?.classList.add("hiden");
+    layout.resumeGame();
   }
 }
-
 window.addEventListener("resize", checkOrientation);
 window.addEventListener("orientationchange", checkOrientation);
 checkOrientation();
@@ -60,8 +61,22 @@ function startGame() {
   });
 
   function goFullscreen() {
-    let elem = document.documentElement;
-    elem.requestFullscreen();
+    const elem = document.documentElement as any;
+
+    if (elem.requestFullscreen) {
+      elem
+        .requestFullscreen()
+        .catch((err: any) => console.warn("Fullscreen request failed:", err));
+    } else if (elem.mozRequestFullScreen) {
+      // Firefox
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      // Chrome, Safari and Opera
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      // IE/Edge
+      elem.msRequestFullscreen();
+    }
   }
 
   document.addEventListener("click", goFullscreen);
