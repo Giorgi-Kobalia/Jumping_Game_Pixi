@@ -58,6 +58,13 @@ function startGame() {
       layout.handleJump();
     });
   });
+
+  function goFullscreen() {
+    let elem = document.documentElement;
+    elem.requestFullscreen();
+  }
+
+  document.addEventListener("click", goFullscreen);
 }
 
 startGame();
