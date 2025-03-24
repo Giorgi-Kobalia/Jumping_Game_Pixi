@@ -64,10 +64,6 @@ export class Layout {
     this.applyJumpPhysics = this.applyJumpPhysics.bind(this);
     this.paralaxAnimation = this.paralaxAnimation.bind(this);
 
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "Space") this.handleJump();
-    });
-
     this.firstStart();
   }
 
@@ -95,7 +91,7 @@ export class Layout {
 
     this.container.addChild(this.start);
 
-    this.start.on("pointerdown", () => {
+    this.start.on("pointertap", () => {
       this.soundOn = !this.soundOn;
       this.gameLogic();
     });

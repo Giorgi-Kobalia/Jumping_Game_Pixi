@@ -48,7 +48,7 @@ export class GameOver {
       GAME_OVER_CONSTANTS.container.y
     );
 
-    this.restart.addEventListener("click", this.handleClose);
+    this.restart.addEventListener("pointertap", this.handleClose);
   }
 
   handleClose = () => {
