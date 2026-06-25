@@ -8,12 +8,15 @@ import {
   Sprite,
 } from "pixi.js";
 import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
+import { JumpController } from "./jump-controller.class";
 import {
   BG_CONSTANTS,
   ZOMBIE_CONSTANTS,
   HOMELESS_CONSTANTS,
+  GAME_CONSTANTS,
 } from "../constants";
 import { HomelessType, ZombieType } from "../types";
+import { playAnimationAndWait, tickerDelay } from "../functions";
 import { sound } from "@pixi/sound";
 
 export class Layout {
@@ -28,17 +31,20 @@ export class Layout {
   public soundIcon = new Sprite();
 
   public initialZombieSpeed = 8;
-  public appearenceHomlessSpeed = 2;
-  public appearenceZombieSpeed = 2;
+  public homelessAppearanceSpeed = 2;
+  public zombieAppearanceSpeed = 2;
   public zombieSpeed = this.initialZombieSpeed;
   public jumpCounter = 0;
-  public isJumping = false;
   public gameWasStarted = false;
-  public jumpVelocity = 0;
   public soundOn = false;
-  public gravity = 0.5;
-  public jumpStrength = -12;
-  public gameOver?: boolean;
+  public gameOver = false;
+
+  private readonly homelessRunInX = 350;
+  private readonly zombieIdleX = 1500;
+  private readonly collisionKnockback = 20;
+  private readonly speedRamp = { every: 3, multiplier: 1.1, max: 20 };
+
+  public jumpController = new JumpController(0.5, -12);
 
   public ticker = new Ticker();
   public start = new Text();
@@ -59,10 +65,6 @@ export class Layout {
     this.gameOverPopUp.onClose = () => {
       this.resetGame();
     };
-
-    this.moveZombie = this.moveZombie.bind(this);
-    this.applyJumpPhysics = this.applyJumpPhysics.bind(this);
-    this.paralaxAnimation = this.paralaxAnimation.bind(this);
 
     this.firstStart();
   }
@@ -103,7 +105,7 @@ export class Layout {
     this.drawSoundIcon(this.soundOn);
     this.ticker.maxFPS = 60;
     this.ticker.start();
-    this.intro();
+    void this.runIntroSequence();
   }
 
   pauseGame() {
@@ -141,64 +143,55 @@ export class Layout {
     this.container.addChild(this.soundIcon);
   }
 
-  moveZombie() {
+  moveZombie = () => {
     this.zombie.container.x -= this.zombieSpeed;
 
     if (this.zombie.container.x + this.zombie.container.width < 0) {
       this.zombie.container.x = ZOMBIE_CONSTANTS.container.x;
       this.jumpCounter++;
       this.counter.updateCounter(this.jumpCounter);
-      if (this.jumpCounter && this.jumpCounter % 3 === 0) {
-        if (this.zombieSpeed >= 20) return;
-        this.zombieSpeed *= 1.1;
+
+      const { every, multiplier, max } = this.speedRamp;
+      if (this.jumpCounter && this.jumpCounter % every === 0) {
+        if (this.zombieSpeed >= max) return;
+        this.zombieSpeed *= multiplier;
       }
     }
 
     if (this.checkCollision()) {
-      this.gameOver = true;
-      this.counter.container.visible = false;
-      this.zombie.container.x += 20;
-      this.homeless.container.x -= 20;
-      this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
-      this.manHurt();
-      this.zombieAttack();
-      this.ticker.remove(this.applyJumpPhysics);
-      this.ticker.remove(this.moveZombie);
-      this.ticker.remove(this.paralaxAnimation);
+      this.handleCollision();
     }
-  }
+  };
 
-  paralaxAnimation() {
+  parallaxAnimation = () => {
     for (let i = 0; i < this.bg.bgElements.length; i++) {
-      const paralaxSpeed = BG_CONSTANTS[i].speed;
+      const parallaxSpeed = BG_CONSTANTS[i].speed;
       const sprite = this.bg.bgElements[i] as TilingSprite;
 
-      sprite.tilePosition.x -= this.zombieSpeed * paralaxSpeed;
+      sprite.tilePosition.x -= this.zombieSpeed * parallaxSpeed;
     }
-  }
+  };
 
   handleJump() {
     if (this.gameOver || !this.gameWasStarted) return;
 
-    if (!this.isJumping) {
-      this.isJumping = true;
-      this.jumpVelocity = this.jumpStrength;
-      this.manJump();
+    if (this.jumpController.jump()) {
+      this.homeless.setAnimation(HomelessType.JUMP);
     }
   }
 
   applyJumpPhysics = () => {
+    if (!this.jumpController.isJumping) return;
+
     const speedFactor = this.zombieSpeed / this.initialZombieSpeed;
+    this.homeless.container.y = this.jumpController.update(
+      this.homeless.container.y,
+      HOMELESS_CONSTANTS.container.y,
+      speedFactor
+    );
 
-    if (this.isJumping) {
-      this.homeless.container.y += this.jumpVelocity * speedFactor;
-      this.jumpVelocity += this.gravity * speedFactor;
-
-      if (this.homeless.container.y >= HOMELESS_CONSTANTS.container.y) {
-        this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
-        this.isJumping = false;
-        this.homeless.setAnimation(HomelessType.RUN);
-      }
+    if (!this.jumpController.isJumping) {
+      this.homeless.setAnimation(HomelessType.RUN);
     }
   };
 
@@ -214,142 +207,165 @@ export class Layout {
     );
   }
 
+  handleCollision() {
+    this.gameOver = true;
+    this.counter.container.visible = false;
+    this.zombie.container.x += this.collisionKnockback;
+    this.homeless.container.x -= this.collisionKnockback;
+    this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
+
+    this.zombie.setAnimation(ZombieType.ATTACK);
+
+    this.ticker.remove(this.applyJumpPhysics);
+    this.ticker.remove(this.moveZombie);
+    this.ticker.remove(this.parallaxAnimation);
+
+    void this.runDeathSequence();
+  }
+
   resetGame = () => {
     this.counter.container.visible = true;
-    this.zombie.container.x = 1500;
-    this.homeless.container.x = 350;
+    this.zombie.container.x = this.zombieIdleX;
+    this.homeless.container.x = this.homelessRunInX;
     this.zombieSpeed = this.initialZombieSpeed;
     this.gameOver = false;
-    this.isJumping = false;
-    this.jumpVelocity = 0;
+    this.jumpController.reset();
     this.jumpCounter = 0;
     this.counter.updateCounter(this.jumpCounter);
     this.gameOverPopUp.container.removeChildren();
     this.container.removeChild(this.darkBg);
-    this.zombieIdle();
     this.gameWasStarted = false;
+
+    void this.runGreetingAndStart();
   };
 
-  // ALL FUNCTIONS OF INTRO
-
-  intro() {
+  async runIntroSequence() {
     this.gameWasStarted = false;
     sound.play("my-sound");
-    this.ticker.add(this.manAppearence);
+
+    await this.moveHomelessIn();
+    this.zombie.setAnimation(ZombieType.WALK);
+    void this.playHomelessDrinkThenIdle();
+
+    await this.moveZombieIn();
+    await this.playZombieEating(2);
+
+    this.bg.bodyContainer.alpha = 0;
+    await this.runGreetingAndStart();
   }
 
-  manAppearence = () => {
-    this.homeless.container.x += this.appearenceHomlessSpeed;
-    if (this.homeless.container.x >= 350) {
-      this.homeless.container.x = 350;
-      this.ticker.remove(this.manAppearence);
-      this.ticker.add(this.zombieAppearence);
-      this.zombie.setAnimation(ZombieType.WALK);
-      this.manDrinkAndIdle();
-    }
-  };
+  private async runGreetingAndStart() {
+    await this.playZombieIdleGreeting();
+    await this.playHomelessSpecialIntro();
+    this.beginRun();
+  }
 
-  manDrinkAndIdle = () => {
-    this.homeless.setAnimation(HomelessType.DRINK);
-    if (this.homeless.sprite) {
-      this.homeless.sprite.onComplete = () => {
-        this.homeless.setAnimation(HomelessType.IDLE);
+  private moveHomelessIn(): Promise<void> {
+    return new Promise((resolve) => {
+      const step = () => {
+        this.homeless.container.x += this.homelessAppearanceSpeed;
+        if (this.homeless.container.x >= this.homelessRunInX) {
+          this.homeless.container.x = this.homelessRunInX;
+          this.ticker.remove(step);
+          resolve();
+        }
       };
-    }
-  };
+      this.ticker.add(step);
+    });
+  }
 
-  manSpecial = () => {
-    this.bg.homelessSpeachContainer.alpha = 1;
-    this.bg.zombieSpeachContainer.alpha = 0;
+  private moveZombieIn(): Promise<void> {
+    return new Promise((resolve) => {
+      const step = () => {
+        this.zombie.container.x -= this.zombieAppearanceSpeed;
+        if (this.zombie.container.x <= this.zombieIdleX) {
+          this.zombie.container.x = this.zombieIdleX;
+          this.ticker.remove(step);
+          resolve();
+        }
+      };
+      this.ticker.add(step);
+    });
+  }
+
+  private async playHomelessDrinkThenIdle() {
+    this.homeless.setAnimation(HomelessType.DRINK);
+    if (!this.homeless.sprite) return;
+    await playAnimationAndWait(this.homeless.sprite);
+    this.homeless.setAnimation(HomelessType.IDLE);
+  }
+
+  private async playHomelessSpecialIntro() {
+    this.bg.homelessSpeechContainer.alpha = 1;
+    this.bg.zombieSpeechContainer.alpha = 0;
 
     this.homeless.setAnimation(HomelessType.SPECIAL);
-    if (this.homeless.sprite) {
-      this.homeless.sprite.onComplete = () => {
-        this.gameWasStarted = true;
-        this.bg.homelessSpeachContainer.alpha = 0;
-        this.zombie.setAnimation(ZombieType.RUN);
-        this.homeless.setAnimation(HomelessType.RUN);
-        this.ticker.add(this.applyJumpPhysics);
-        this.ticker.add(this.moveZombie);
-        this.ticker.add(this.paralaxAnimation);
-      };
-    }
-  };
+    if (!this.homeless.sprite) return;
+    await playAnimationAndWait(this.homeless.sprite);
+    this.bg.homelessSpeechContainer.alpha = 0;
+  }
 
-  manHurt = () => {
-    this.homeless.setAnimation(HomelessType.HURT);
-    if (this.homeless.sprite) {
-      this.homeless.sprite.onComplete = () => {
-        this.manDead();
-      };
-    }
-  };
+  private beginRun() {
+    this.gameWasStarted = true;
+    this.zombie.setAnimation(ZombieType.RUN);
+    this.homeless.setAnimation(HomelessType.RUN);
+    this.ticker.add(this.applyJumpPhysics);
+    this.ticker.add(this.moveZombie);
+    this.ticker.add(this.parallaxAnimation);
+  }
 
-  manDead = () => {
-    this.homeless.setAnimation(HomelessType.DEAD);
-
-    if (this.homeless.sprite) {
-      this.homeless.sprite.onComplete = () => {
-        this.zombieEat(2, this.gameOver);
-      };
-    }
-  };
-
-  manJump = () => {
-    this.homeless.setAnimation(HomelessType.JUMP);
-  };
-
-  // ZOMBIE
-
-  zombieAppearence = () => {
-    this.zombie.container.x -= this.appearenceZombieSpeed;
-    if (this.zombie.container.x <= 1500) {
-      this.zombie.container.x = 1500;
-      this.ticker.remove(this.zombieAppearence);
-      this.zombieEat(2, this.gameOver);
-    }
-  };
-
-  zombieEat = (playEmount: number, gameOver?: boolean) => {
-    if (!this.zombie.sprite) return;
-    let counter = 1;
-    this.zombie.setAnimation(ZombieType.EAT);
-
-    this.zombie.sprite.onComplete = () => {
-      if (!this.zombie.sprite) return;
-
-      if (counter < playEmount) {
-        this.zombie.sprite.gotoAndPlay(0);
-        counter++;
-      } else {
-        if (!gameOver) {
-          this.bg.bodyContainer.alpha = 0;
-          this.zombieIdle();
-        } else {
-          this.gameEnd();
-        }
+  private playZombieEating(times: number): Promise<void> {
+    return new Promise((resolve) => {
+      this.zombie.setAnimation(ZombieType.EAT);
+      if (!this.zombie.sprite) {
+        resolve();
+        return;
       }
-    };
-  };
 
-  zombieIdle = () => {
-    this.bg.zombieSpeachContainer.alpha = 1;
+      let count = 1;
+      this.zombie.sprite.onComplete = () => {
+        if (!this.zombie.sprite) {
+          resolve();
+          return;
+        }
+
+        if (count < times) {
+          this.zombie.sprite.gotoAndPlay(0);
+          count++;
+        } else {
+          resolve();
+        }
+      };
+    });
+  }
+
+  private async playZombieIdleGreeting() {
+    this.bg.zombieSpeechContainer.alpha = 1;
     this.zombie.setAnimation(ZombieType.IDLE);
     this.homeless.setAnimation(HomelessType.IDLE);
-    setTimeout(() => {
-      this.manSpecial();
-    }, 2000);
-  };
+    await tickerDelay(this.ticker, 2000);
+  }
 
-  zombieAttack = () => {
-    this.zombie.setAnimation(ZombieType.ATTACK);
-  };
+  private async runDeathSequence() {
+    this.homeless.setAnimation(HomelessType.HURT);
+    if (this.homeless.sprite) {
+      await playAnimationAndWait(this.homeless.sprite);
+    }
+
+    this.homeless.setAnimation(HomelessType.DEAD);
+    if (this.homeless.sprite) {
+      await playAnimationAndWait(this.homeless.sprite);
+    }
+
+    await this.playZombieEating(2);
+
+    this.gameEnd();
+  }
 
   addDarkBg(value: number = 0) {
     this.darkBg.clear();
     this.darkBg
-      .rect(0, 0, 1600, 566)
-
+      .rect(0, 0, GAME_CONSTANTS.width, GAME_CONSTANTS.height)
       .fill("black");
     this.darkBg.alpha = value;
 

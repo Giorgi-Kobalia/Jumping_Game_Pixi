@@ -5,21 +5,18 @@
   user-select: none;
 }
 
+html,
 body {
   width: 100%;
-  background-color: #577277;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px 0 20px;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
+  background-color: #577277;
 }
 
 #app canvas {
-  border: 5px solid #000;
+  display: block;
   width: 100%;
-  max-width: 1600px;
+  height: 100%;
 }
 
 #rotate-message {

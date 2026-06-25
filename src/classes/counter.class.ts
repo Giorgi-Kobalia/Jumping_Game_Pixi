@@ -5,7 +5,7 @@ export class Counter {
   public container = new Container();
   public jumpCounterText?: Text;
   public darkBg = new Graphics();
-  public border = new Graphics(); // New border graphic
+  public border = new Graphics();
 
   init() {
     this.drawCounter();

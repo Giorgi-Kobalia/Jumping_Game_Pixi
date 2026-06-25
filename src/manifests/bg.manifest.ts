@@ -10,8 +10,8 @@ export const bg_manifest = {
   wall: "./images/bg/layer_9_wall.png",
 
   dead_women: "./images/bg/edditional/deadWoman.png",
-  zombieSpeach: "./images/bg/edditional/zombie_Speach.png",
-  homelessSpeach: "./images/bg/edditional/homeless_Speach.png",
+  zombieSpeech: "./images/bg/edditional/zombie_Speach.png",
+  homelessSpeech: "./images/bg/edditional/homeless_Speach.png",
   sound_true: "./images/bg/edditional/sound_on.png",
   sound_false: "./images/bg/edditional/sound_off.png",
 };
