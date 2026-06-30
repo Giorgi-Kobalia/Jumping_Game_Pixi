@@ -2,12 +2,12 @@ import {
   Container,
   Graphics,
   Ticker,
-  TilingSprite,
   Text,
   Assets,
   Sprite,
 } from "pixi.js";
 import { Homeless, Zombie, Counter, GameOver, Bg } from ".";
+import { ScoreManager } from "./score-manager.class";
 import { JumpController } from "./jump-controller.class";
 import {
   BG_CONSTANTS,
@@ -15,7 +15,7 @@ import {
   HOMELESS_CONSTANTS,
   GAME_CONSTANTS,
 } from "../constants";
-import { HomelessType, ZombieType } from "../types";
+import { HomelessType, ZombieType, GameState } from "../types";
 import { playAnimationAndWait, tickerDelay } from "../functions";
 import { sound } from "@pixi/sound";
 
@@ -30,14 +30,14 @@ export class Layout {
   public darkBg = new Graphics();
   public soundIcon = new Sprite();
 
+  private state: GameState = GameState.IDLE;
+  private scoreManager = new ScoreManager();
+
   public initialZombieSpeed = 8;
   public homelessAppearanceSpeed = 2;
   public zombieAppearanceSpeed = 2;
   public zombieSpeed = this.initialZombieSpeed;
-  public jumpCounter = 0;
-  public gameWasStarted = false;
   public soundOn = false;
-  public gameOver = false;
 
   private readonly homelessRunInX = 350;
   private readonly zombieIdleX = 1500;
@@ -54,6 +54,7 @@ export class Layout {
     this.homeless.init();
     this.zombie.init();
     this.counter.init();
+    this.counter.updateCounter(0, this.scoreManager.highScore);
 
     this.container.addChild(
       this.bg.container,
@@ -100,6 +101,7 @@ export class Layout {
   }
 
   gameLogic() {
+    this.state = GameState.INTRO;
     this.container.removeChild(this.start);
     this.container.removeChild(this.darkBg);
     this.drawSoundIcon(this.soundOn);
@@ -148,13 +150,15 @@ export class Layout {
 
     if (this.zombie.container.x + this.zombie.container.width < 0) {
       this.zombie.container.x = ZOMBIE_CONSTANTS.container.x;
-      this.jumpCounter++;
-      this.counter.updateCounter(this.jumpCounter);
+      this.scoreManager.increment();
+      this.counter.updateCounter(this.scoreManager.current, this.scoreManager.highScore);
+      this.showMilestone(this.scoreManager.current);
 
       const { every, multiplier, max } = this.speedRamp;
-      if (this.jumpCounter && this.jumpCounter % every === 0) {
-        if (this.zombieSpeed >= max) return;
-        this.zombieSpeed *= multiplier;
+      if (this.scoreManager.current > 0 && this.scoreManager.current % every === 0) {
+        if (this.zombieSpeed < max) {
+          this.zombieSpeed *= multiplier;
+        }
       }
     }
 
@@ -165,15 +169,12 @@ export class Layout {
 
   parallaxAnimation = () => {
     for (let i = 0; i < this.bg.bgElements.length; i++) {
-      const parallaxSpeed = BG_CONSTANTS[i].speed;
-      const sprite = this.bg.bgElements[i] as TilingSprite;
-
-      sprite.tilePosition.x -= this.zombieSpeed * parallaxSpeed;
+      this.bg.bgElements[i].tilePosition.x -= this.zombieSpeed * BG_CONSTANTS[i].speed;
     }
   };
 
   handleJump() {
-    if (this.gameOver || !this.gameWasStarted) return;
+    if (this.state !== GameState.PLAYING) return;
 
     if (this.jumpController.jump()) {
       this.homeless.setAnimation(HomelessType.JUMP);
@@ -183,11 +184,9 @@ export class Layout {
   applyJumpPhysics = () => {
     if (!this.jumpController.isJumping) return;
 
-    const speedFactor = this.zombieSpeed / this.initialZombieSpeed;
     this.homeless.container.y = this.jumpController.update(
       this.homeless.container.y,
-      HOMELESS_CONSTANTS.container.y,
-      speedFactor
+      HOMELESS_CONSTANTS.container.y
     );
 
     if (!this.jumpController.isJumping) {
@@ -208,11 +207,12 @@ export class Layout {
   }
 
   handleCollision() {
-    this.gameOver = true;
+    this.state = GameState.DYING;
     this.counter.container.visible = false;
     this.zombie.container.x += this.collisionKnockback;
     this.homeless.container.x -= this.collisionKnockback;
     this.homeless.container.y = HOMELESS_CONSTANTS.container.y;
+    this.jumpController.reset();
 
     this.zombie.setAnimation(ZombieType.ATTACK);
 
@@ -228,19 +228,17 @@ export class Layout {
     this.zombie.container.x = this.zombieIdleX;
     this.homeless.container.x = this.homelessRunInX;
     this.zombieSpeed = this.initialZombieSpeed;
-    this.gameOver = false;
+    this.state = GameState.INTRO;
     this.jumpController.reset();
-    this.jumpCounter = 0;
-    this.counter.updateCounter(this.jumpCounter);
+    this.scoreManager.reset();
+    this.counter.updateCounter(0, this.scoreManager.highScore);
     this.gameOverPopUp.container.removeChildren();
     this.container.removeChild(this.darkBg);
-    this.gameWasStarted = false;
 
     void this.runGreetingAndStart();
   };
 
   async runIntroSequence() {
-    this.gameWasStarted = false;
     sound.play("my-sound");
 
     await this.moveHomelessIn();
@@ -306,7 +304,7 @@ export class Layout {
   }
 
   private beginRun() {
-    this.gameWasStarted = true;
+    this.state = GameState.PLAYING;
     this.zombie.setAnimation(ZombieType.RUN);
     this.homeless.setAnimation(HomelessType.RUN);
     this.ticker.add(this.applyJumpPhysics);
@@ -369,11 +367,16 @@ export class Layout {
       .fill("black");
     this.darkBg.alpha = value;
 
-    this.container.addChild(this.darkBg);
+    if (!this.darkBg.parent) {
+      this.container.addChild(this.darkBg);
+    }
   }
 
   addGameOverPopUp() {
-    this.gameOverPopUp.drawGameOverPopUp(this.jumpCounter);
+    this.gameOverPopUp.drawGameOverPopUp(
+      this.scoreManager.current,
+      this.scoreManager.highScore
+    );
     this.container.addChild(this.gameOverPopUp.container);
   }
 
@@ -386,8 +389,52 @@ export class Layout {
   };
 
   gameEnd() {
+    this.state = GameState.GAME_OVER;
     this.addDarkBg();
     this.addGameOverPopUp();
     this.ticker.add(this.makeDark);
+  }
+
+  private showMilestone(score: number) {
+    if (score === 0 || score % 5 !== 0) return;
+
+    const text = new Text({
+      text: `${score}!`,
+      style: {
+        fontFamily: "Bungeespice Regular",
+        fontSize: 100,
+        fill: "#FFD700",
+        stroke: { color: "#000000", width: 4 },
+      },
+    });
+
+    text.anchor.set(0.5);
+    text.position.set(GAME_CONSTANTS.width / 2, 120);
+    text.alpha = 0;
+    text.scale.set(0.5);
+    this.container.addChild(text);
+
+    let phase: "in" | "hold" | "out" = "in";
+    let holdElapsed = 0;
+
+    const animate = () => {
+      if (phase === "in") {
+        text.alpha = Math.min(1, text.alpha + 0.1);
+        text.scale.set(Math.min(1, text.scale.x + 0.05));
+        if (text.alpha >= 1) phase = "hold";
+      } else if (phase === "hold") {
+        holdElapsed += this.ticker.deltaMS;
+        if (holdElapsed >= 400) phase = "out";
+      } else {
+        text.alpha = Math.max(0, text.alpha - 0.05);
+        if (text.alpha <= 0) {
+          this.ticker.remove(animate);
+          this.container.removeChild(text);
+          text.destroy();
+        }
+      }
+    };
+
+    this.ticker.add(animate);
   }
 }

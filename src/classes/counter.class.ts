@@ -13,7 +13,7 @@ export class Counter {
 
   drawCounter() {
     this.jumpCounterText = new Text({
-      text: ``,
+      text: "",
       style: COUNTER_CONSTANTS.text_style,
     });
 
@@ -22,33 +22,34 @@ export class Counter {
       COUNTER_CONSTANTS.container.y
     );
 
-    this.darkBg.rect(0, 0, 300, 50).fill("black");
+    const { width, height } = COUNTER_CONSTANTS.bg;
+    this.darkBg.rect(0, 0, width, height).fill("black");
     this.darkBg.alpha = 0.7;
 
     this.container.addChild(this.border, this.darkBg, this.jumpCounterText);
 
     this.border
-      .rect(0, 0, this.container.width, this.container.height)
+      .rect(0, 0, width, height)
       .stroke({ color: 0x000000, width: 5 });
 
     this.jumpCounterText.resolution = 2;
 
-    this.updateCounter(0);
+    this.updateCounter(0, 0);
   }
 
-  updateCounter(value: number) {
-    if (this.jumpCounterText) {
-      this.jumpCounterText.text = `SCORE : ${value}`;
+  updateCounter(score: number, highScore: number) {
+    if (!this.jumpCounterText) return;
 
-      this.jumpCounterText.pivot.set(
-        this.jumpCounterText.width / 2,
-        this.jumpCounterText.height / 2
-      );
+    this.jumpCounterText.text = `SCORE : ${score}\nBEST  : ${highScore}`;
 
-      this.jumpCounterText.position.set(
-        this.darkBg.width / 2,
-        this.darkBg.height / 2
-      );
-    }
+    this.jumpCounterText.pivot.set(
+      this.jumpCounterText.width / 2,
+      this.jumpCounterText.height / 2
+    );
+
+    this.jumpCounterText.position.set(
+      COUNTER_CONSTANTS.bg.width / 2,
+      COUNTER_CONSTANTS.bg.height / 2
+    );
   }
 }

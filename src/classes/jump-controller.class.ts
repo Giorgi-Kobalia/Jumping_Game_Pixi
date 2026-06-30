@@ -1,6 +1,7 @@
 export class JumpController {
-  private jumping = false;
+  private jumpsUsed = 0;
   private jumpVelocity = 0;
+  private readonly maxJumps = 2;
 
   constructor(
     private readonly gravity: number,
@@ -8,29 +9,30 @@ export class JumpController {
   ) {}
 
   get isJumping() {
-    return this.jumping;
+    return this.jumpsUsed > 0;
   }
 
   jump(): boolean {
-    if (this.jumping) return false;
-    this.jumping = true;
+    if (this.jumpsUsed >= this.maxJumps) return false;
+    this.jumpsUsed++;
     this.jumpVelocity = this.jumpStrength;
     return true;
   }
 
   reset() {
-    this.jumping = false;
+    this.jumpsUsed = 0;
     this.jumpVelocity = 0;
   }
 
-  update(currentY: number, groundY: number, speedFactor: number): number {
-    if (!this.jumping) return currentY;
+  update(currentY: number, groundY: number): number {
+    if (this.jumpsUsed === 0) return currentY;
 
-    const nextY = currentY + this.jumpVelocity * speedFactor;
-    this.jumpVelocity += this.gravity * speedFactor;
+    const nextY = currentY + this.jumpVelocity;
+    this.jumpVelocity += this.gravity;
 
     if (nextY >= groundY) {
-      this.jumping = false;
+      this.jumpsUsed = 0;
+      this.jumpVelocity = 0;
       return groundY;
     }
 

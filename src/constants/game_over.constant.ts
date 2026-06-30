@@ -7,8 +7,6 @@ export const GAME_OVER_CONSTANTS = {
     fill: "red",
   },
 
-  game_over_text: "GAME OVER ! YOUR SCORE:",
-
   game_over_text_style: {
     align: "center",
     fontFamily: "Bungeespice Regular",

@@ -1,3 +1,9 @@
+export const BG_ADDITIONAL_CONSTANTS = {
+  deadWoman: { x: 1350, y: 516, width: 124, height: 22 },
+  zombieSpeech: { x: 1320, y: 400, width: 200, height: 70 },
+  homelessSpeech: { x: 330, y: 350, width: 200, height: 70 },
+};
+
 export const BG_CONSTANTS = [
   {
     img: "ground",

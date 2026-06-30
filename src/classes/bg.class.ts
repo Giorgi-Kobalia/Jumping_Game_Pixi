@@ -1,5 +1,5 @@
-import { Assets, Container, Sprite } from "pixi.js";
-import { BG_CONSTANTS, GAME_CONSTANTS } from "../constants";
+import { Assets, Container, Sprite, TilingSprite } from "pixi.js";
+import { BG_ADDITIONAL_CONSTANTS, BG_CONSTANTS, GAME_CONSTANTS } from "../constants";
 import { createTillingSprite } from "../functions";
 
 export class Bg {
@@ -7,7 +7,7 @@ export class Bg {
   public bodyContainer = new Container();
   public zombieSpeechContainer = new Container();
   public homelessSpeechContainer = new Container();
-  public bgElements: Container[] = [];
+  public bgElements: TilingSprite[] = [];
 
   init() {
     BG_CONSTANTS.forEach((element) => {
@@ -27,26 +27,28 @@ export class Bg {
   }
 
   drawAdditionalElements() {
-    const deadWoman = new Sprite(Assets.get("dead_women"));
-    deadWoman.width = 124;
-    deadWoman.height = 22;
-    this.bodyContainer.addChild(deadWoman);
-    this.bodyContainer.position.set(1350, 516);
+    const { deadWoman, zombieSpeech, homelessSpeech } = BG_ADDITIONAL_CONSTANTS;
+
+    const deadWomanSprite = new Sprite(Assets.get("dead_women"));
+    deadWomanSprite.width = deadWoman.width;
+    deadWomanSprite.height = deadWoman.height;
+    this.bodyContainer.addChild(deadWomanSprite);
+    this.bodyContainer.position.set(deadWoman.x, deadWoman.y);
     this.container.addChild(this.bodyContainer);
 
-    const zombieSpeech = new Sprite(Assets.get("zombieSpeech"));
-    zombieSpeech.width = 200;
-    zombieSpeech.height = 70;
-    this.zombieSpeechContainer.addChild(zombieSpeech);
-    this.zombieSpeechContainer.position.set(1320, 400);
+    const zombieSpeechSprite = new Sprite(Assets.get("zombieSpeech"));
+    zombieSpeechSprite.width = zombieSpeech.width;
+    zombieSpeechSprite.height = zombieSpeech.height;
+    this.zombieSpeechContainer.addChild(zombieSpeechSprite);
+    this.zombieSpeechContainer.position.set(zombieSpeech.x, zombieSpeech.y);
     this.zombieSpeechContainer.alpha = 0;
     this.container.addChild(this.zombieSpeechContainer);
 
-    const homelessSpeech = new Sprite(Assets.get("homelessSpeech"));
-    homelessSpeech.width = 200;
-    homelessSpeech.height = 70;
-    this.homelessSpeechContainer.addChild(homelessSpeech);
-    this.homelessSpeechContainer.position.set(330, 350);
+    const homelessSpeechSprite = new Sprite(Assets.get("homelessSpeech"));
+    homelessSpeechSprite.width = homelessSpeech.width;
+    homelessSpeechSprite.height = homelessSpeech.height;
+    this.homelessSpeechContainer.addChild(homelessSpeechSprite);
+    this.homelessSpeechContainer.position.set(homelessSpeech.x, homelessSpeech.y);
     this.homelessSpeechContainer.alpha = 0;
     this.container.addChild(this.homelessSpeechContainer);
   }
